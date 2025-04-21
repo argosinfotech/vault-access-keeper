@@ -16,8 +16,10 @@ const Login = () => {
 
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center bg-gradient-to-tr from-purple-900 via-indigo-900 to-blue-900">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
-      <LoginForm />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" style={{ pointerEvents: "none" }}></div>
+      <div className="relative z-10">
+        <LoginForm />
+      </div>
     </div>
   );
 };
