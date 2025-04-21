@@ -1,30 +1,32 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Vault Access Keeper Theme - Light Mode */
+    /* Vault Access Keeper Theme - Light Mode - Updated to gray & purple */
     --background: 210 40% 98%;
-    --foreground: 222.2 47.4% 11.2%;
+    --foreground: 222.2 7% 20%; /* darker gray text */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+    --card-foreground: 222.2 7% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 222.2 7% 20%;
 
-    --primary: 250 47.4% 40%;
+    /* Changed primary from blue to gray */
+    --primary: 214 4% 60%; /* gray */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 220 16.1% 92.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 260 30% 80%; /* purple */
+    --secondary-foreground: 260 40% 30%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 180 47.4% 50%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 260 60% 70%; /* purple */
+    --accent-foreground: 260 40% 30%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -32,44 +34,45 @@
     --success: 142 76.2% 36.3%;
     --success-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 250 47.4% 40%;
+    --border: 214.3 10% 80%; /* lighter gray border */
+    --input: 214.3 10% 80%;
+    --ring: 214 4% 60%; /* match new primary gray */
 
     --radius: 0.5rem;
 
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 250 47.4% 40%;
+    --sidebar-primary: 260 60% 70%; /* purple accent */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 180 47.4% 50%;
-    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 260 60% 70%;
+    --sidebar-accent-foreground: 222.2 7% 20%;
     --sidebar-border: 224 71% 4%;
-    --sidebar-ring: 250 47.4% 40%;
+    --sidebar-ring: 260 60% 70%;
   }
 
   .dark {
-    /* Vault Access Keeper Theme - Dark Mode */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Vault Access Keeper Theme - Dark Mode - Updated to gray & purple */
+    --background: 222 10% 12%;
+    --foreground: 222.2 7% 80%;
 
-    --card: 224 71% 4%;
-    --card-foreground: 210 40% 98%;
+    --card: 224 10% 16%;
+    --card-foreground: 222.2 7% 80%;
 
-    --popover: 224 71% 4%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 224 10% 16%;
+    --popover-foreground: 222.2 7% 80%;
 
-    --primary: 250 47.4% 40%;
+    /* Changed primary from blue to gray */
+    --primary: 210 4% 60%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 260 40% 60%; /* purple */
+    --secondary-foreground: 260 40% 80%;
 
     --muted: 215 27.9% 16.9%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 180 47.4% 50%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 260 60% 70%;
+    --accent-foreground: 260 40% 30%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -77,18 +80,18 @@
     --success: 142 76.2% 36.3%;
     --success-foreground: 210 40% 98%;
 
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 250 47.4% 40%;
+    --border: 215 10% 40%; /* darker gray border */
+    --input: 215 10% 40%;
+    --ring: 210 4% 60%;
 
-    --sidebar-background: 224 71% 4%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 250 47.4% 40%;
+    --sidebar-background: 224 10% 16%;
+    --sidebar-foreground: 222.2 7% 80%;
+    --sidebar-primary: 260 60% 70%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 180 47.4% 50%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 27.9% 16.9%;
-    --sidebar-ring: 250 47.4% 40%;
+    --sidebar-accent: 260 60% 70%;
+    --sidebar-accent-foreground: 222.2 7% 20%;
+    --sidebar-border: 215 10% 40%;
+    --sidebar-ring: 260 60% 70%;
   }
 }
 
