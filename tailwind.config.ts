@@ -11,6 +11,9 @@ export default {
   ],
   prefix: "",
   theme: {
+    fontFamily: {
+      sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+    },
     container: {
       center: true,
       padding: '2rem',
@@ -26,11 +29,11 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
+          DEFAULT: 'hsl(var(--primary))',         // soft gray now
           foreground: 'hsl(var(--primary-foreground))'
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
+          DEFAULT: 'hsl(var(--secondary))',       // purple accent
           foreground: 'hsl(var(--secondary-foreground))'
         },
         destructive: {
@@ -42,7 +45,7 @@ export default {
           foreground: 'hsl(var(--muted-foreground))'
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
+          DEFAULT: 'hsl(var(--accent))',         // purple accent
           foreground: 'hsl(var(--accent-foreground))'
         },
         popover: {
@@ -95,3 +98,4 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+

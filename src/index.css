@@ -1,101 +1,101 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Vault Access Keeper Theme - Light Mode - Updated to gray & purple */
-    --background: 210 40% 98%;
-    --foreground: 222.2 7% 20%; /* darker gray text */
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 7% 20%;
+    /* Amplitude-inspired Light Theme */
+    --background: 220 20% 99%;              /* almost pure white */
+    --foreground: 225 7% 20%;               /* soft charcoal gray text */
+    --card: 0 0% 100%;                      /* pure white card */
+    --card-foreground: 225 7% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 7% 20%;
+    --popover-foreground: 225 7% 20%;
 
-    /* Changed primary from blue to gray */
-    --primary: 214 4% 60%; /* gray */
-    --primary-foreground: 210 40% 98%;
+    --primary: 220 10% 90%;                 /* pale gray for primaries */
+    --primary-foreground: 225 7% 20%;
 
-    --secondary: 260 30% 80%; /* purple */
-    --secondary-foreground: 260 40% 30%;
+    --secondary: 260 100% 77%;              /* amplitude purple accent */
+    --secondary-foreground: 260 40% 30%;    /* deep purple */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 16% 96%;                   /* muted background gray */
+    --muted-foreground: 226 15% 46%;
 
-    --accent: 260 60% 70%; /* purple */
+    --accent: 258 97% 70%;                  /* vivid purple for accent */
     --accent-foreground: 260 40% 30%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
     --success: 142 76.2% 36.3%;
-    --success-foreground: 210 40% 98%;
+    --success-foreground: 220 20% 99%;
 
-    --border: 214.3 10% 80%; /* lighter gray border */
-    --input: 214.3 10% 80%;
-    --ring: 214 4% 60%; /* match new primary gray */
-
+    --border: 220 14% 93%;                  /* very light, subtle gray border */
+    --input: 220 14% 93%;
+    --ring: 260 100% 77%;                   /* accent purple */
     --radius: 0.5rem;
 
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 260 60% 70%; /* purple accent */
+    --sidebar-background: 220 20% 99%;      /* match page background */
+    --sidebar-foreground: 225 7% 20%;
+    --sidebar-primary: 260 100% 77%;        /* purple accent */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 60% 70%;
-    --sidebar-accent-foreground: 222.2 7% 20%;
-    --sidebar-border: 224 71% 4%;
-    --sidebar-ring: 260 60% 70%;
+    --sidebar-accent: 258 97% 70%;
+    --sidebar-accent-foreground: 260 40% 30%;
+    --sidebar-border: 220 14% 93%;          /* very subtle */
+    --sidebar-ring: 258 97% 70%;
   }
 
   .dark {
-    /* Vault Access Keeper Theme - Dark Mode - Updated to gray & purple */
-    --background: 222 10% 12%;
-    --foreground: 222.2 7% 80%;
+    /* No dark colors per user request, just soft gray-on-gray */
+    --background: 220 16% 93%;              /* light gray */
+    --foreground: 225 7% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 225 7% 20%;
 
-    --card: 224 10% 16%;
-    --card-foreground: 222.2 7% 80%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 225 7% 20%;
 
-    --popover: 224 10% 16%;
-    --popover-foreground: 222.2 7% 80%;
+    --primary: 220 10% 90%;
+    --primary-foreground: 225 7% 20%;
 
-    /* Changed primary from blue to gray */
-    --primary: 210 4% 60%;
-    --primary-foreground: 210 40% 98%;
+    --secondary: 260 100% 77%;
+    --secondary-foreground: 260 40% 30%;
 
-    --secondary: 260 40% 60%; /* purple */
-    --secondary-foreground: 260 40% 80%;
+    --muted: 220 16% 96%;
+    --muted-foreground: 226 15% 46%;
 
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 260 60% 70%;
+    --accent: 258 97% 70%; 
     --accent-foreground: 260 40% 30%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 220 20% 99%;
 
     --success: 142 76.2% 36.3%;
-    --success-foreground: 210 40% 98%;
+    --success-foreground: 220 20% 99%;
 
-    --border: 215 10% 40%; /* darker gray border */
-    --input: 215 10% 40%;
-    --ring: 210 4% 60%;
+    --border: 220 14% 93%;
+    --input: 220 14% 93%;
+    --ring: 258 97% 70%;
 
-    --sidebar-background: 224 10% 16%;
-    --sidebar-foreground: 222.2 7% 80%;
-    --sidebar-primary: 260 60% 70%;
+    --sidebar-background: 220 16% 93%;
+    --sidebar-foreground: 225 7% 20%;
+    --sidebar-primary: 260 100% 77%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 60% 70%;
-    --sidebar-accent-foreground: 222.2 7% 20%;
-    --sidebar-border: 215 10% 40%;
-    --sidebar-ring: 260 60% 70%;
+    --sidebar-accent: 258 97% 70%;
+    --sidebar-accent-foreground: 260 40% 30%;
+    --sidebar-border: 220 14% 93%;
+    --sidebar-ring: 258 97% 70%;
   }
 }
 
 @layer base {
+  html {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  }
   * {
     @apply border-border;
   }
@@ -104,3 +104,4 @@
     @apply bg-background text-foreground;
   }
 }
+
