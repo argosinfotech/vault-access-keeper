@@ -30,42 +30,42 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#7E69AB',                   // amplitude purple
+          DEFAULT: '#0EA5E9',                   // amplitude blue
           foreground: '#fff'
         },
         secondary: {
-          DEFAULT: '#E5DEFF',                   // soft secondary purple
-          foreground: '#43325D'
+          DEFAULT: '#D3E4FD',                   // soft secondary blue
+          foreground: '#0A4B76'
         },
         destructive: {
-          DEFAULT: '#FF467E',
+          DEFAULT: '#FF3333',                   // red for destructive actions
           foreground: '#fff'
         },
         muted: {
-          DEFAULT: '#F5F4FB',                   // Amplitude muted bg
-          foreground: '#6E59A5'
+          DEFAULT: '#F0F7FF',                   // Amplitude muted bg
+          foreground: '#0A4B76'
         },
         accent: {
-          DEFAULT: '#9B87F5',                   // vivid accent purple
+          DEFAULT: '#33C3F0',                   // vivid accent blue
           foreground: '#fff'
         },
         popover: {
           DEFAULT: '#FFF',
-          foreground: '#43325D'
+          foreground: '#0A4B76'
         },
         card: {
           DEFAULT: '#FFF',
-          foreground: '#43325D'
+          foreground: '#0A4B76'
         },
         sidebar: {
-          DEFAULT: '#F5F4FB',                   // sidebar bg - subtle purple/gray
-          foreground: '#43325D',
-          primary: '#7E69AB',
+          DEFAULT: '#F0F7FF',                   // sidebar bg - subtle blue/gray
+          foreground: '#0A4B76',
+          primary: '#0EA5E9',
           'primary-foreground': '#fff',
-          accent: '#9B87F5',
+          accent: '#33C3F0',
           'accent-foreground': '#fff',
-          border: '#E5DEFF',
-          ring: '#9B87F5'
+          border: '#D3E4FD',
+          ring: '#33C3F0'
         }
       },
       borderRadius: {

@@ -7,88 +7,88 @@
 
 @layer base {
   :root {
-    /* Amplitude-inspired Light Theme */
-    --background: 252 100% 99%;              /* very pale purple-white */
-    --foreground: 260 40% 30%;               /* deep purple for headings/text */
+    /* Amplitude-inspired Light Theme with Blues */
+    --background: 210 100% 99%;              /* very pale blue-white */
+    --foreground: 200 80% 25%;               /* deep blue for headings/text */
     --card: 0 0% 100%;                       /* true white card */
-    --card-foreground: 260 40% 30%;
+    --card-foreground: 200 80% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 260 40% 30%;
+    --popover-foreground: 200 80% 25%;
 
-    --primary: 258 34% 54%;                  /* #7E69AB amplitude purple */
+    --primary: 198 92% 48%;                  /* #0EA5E9 amplitude blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 258 100% 94%;               /* #E5DEFF soft purple */
-    --secondary-foreground: 260 40% 30%;
+    --secondary: 213 90% 91%;                /* #D3E4FD soft blue */
+    --secondary-foreground: 200 85% 25%;
 
-    --muted: 257 57% 97%;                    /* #F5F4FB muted pale purple */
-    --muted-foreground: 260 34% 40%;
+    --muted: 210 100% 97%;                   /* #F0F7FF muted pale blue */
+    --muted-foreground: 200 85% 40%;
 
-    --accent: 252 84% 76%;                   /* #9B87F5 vivid accent purple */
+    --accent: 196 86% 57%;                   /* #33C3F0 vivid accent blue */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 340 71% 57%;              /* amplitude pink (e.g. #FF467E) */
+    --destructive: 0 80% 60%;                /* red (no pink tones) */
     --destructive-foreground: 0 0% 100%;
 
     --success: 142 76.2% 36.3%;
     --success-foreground: 220 20% 99%;
 
-    --border: 258 100% 94%;                  /* matches --secondary very pale purple */
-    --input: 258 100% 94%;                   /* matches --secondary very pale purple */
-    --ring: 252 84% 76%;                     /* #9B87F5 accent purple */
+    --border: 213 90% 91%;                   /* matches --secondary very pale blue */
+    --input: 213 90% 91%;                    /* matches --secondary very pale blue */
+    --ring: 196 86% 57%;                     /* #33C3F0 accent blue */
     --radius: 20px;
 
-    --sidebar-background: 257 57% 97%;       /* very pale purple - #F5F4FB */
-    --sidebar-foreground: 260 40% 30%;
-    --sidebar-primary: 258 34% 54%;          /* #7E69AB primary purple */
+    --sidebar-background: 210 100% 97%;       /* very pale blue - #F0F7FF */
+    --sidebar-foreground: 200 80% 25%;
+    --sidebar-primary: 198 92% 48%;           /* #0EA5E9 primary blue */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 252 84% 76%;           /* #9B87F5 vivid accent */
+    --sidebar-accent: 196 86% 57%;            /* #33C3F0 vivid accent blue */
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 258 100% 94%;
-    --sidebar-ring: 252 84% 76%;
+    --sidebar-border: 213 90% 91%;
+    --sidebar-ring: 196 86% 57%;
   }
 
   .dark {
     /* Amplitude doesn't use a true dark theme, just softer grays. */
-    --background: 257 57% 97%;
-    --foreground: 260 40% 30%;
+    --background: 210 100% 97%;
+    --foreground: 200 80% 25%;
     --card: 0 0% 100%;
-    --card-foreground: 260 40% 30%;
+    --card-foreground: 200 80% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 260 40% 30%;
+    --popover-foreground: 200 80% 25%;
 
-    --primary: 258 34% 54%;
+    --primary: 198 92% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 258 100% 94%;
-    --secondary-foreground: 260 40% 30%;
+    --secondary: 213 90% 91%;
+    --secondary-foreground: 200 85% 25%;
 
-    --muted: 257 57% 97%;
-    --muted-foreground: 260 34% 40%;
+    --muted: 210 100% 97%;
+    --muted-foreground: 200 85% 40%;
 
-    --accent: 252 84% 76%;
+    --accent: 196 86% 57%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 340 71% 57%;
+    --destructive: 0 80% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --success: 142 76.2% 36.3%;
     --success-foreground: 220 20% 99%;
 
-    --border: 258 100% 94%;
-    --input: 258 100% 94%;
-    --ring: 252 84% 76%;
+    --border: 213 90% 91%;
+    --input: 213 90% 91%;
+    --ring: 196 86% 57%;
 
-    --sidebar-background: 257 57% 97%;
-    --sidebar-foreground: 260 40% 30%;
-    --sidebar-primary: 258 34% 54%;
+    --sidebar-background: 210 100% 97%;
+    --sidebar-foreground: 200 80% 25%;
+    --sidebar-primary: 198 92% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 252 84% 76%;
+    --sidebar-accent: 196 86% 57%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 258 100% 94%;
-    --sidebar-ring: 252 84% 76%;
+    --sidebar-border: 213 90% 91%;
+    --sidebar-ring: 196 86% 57%;
   }
 }
 
