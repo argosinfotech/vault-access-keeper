@@ -3,11 +3,15 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { Badge } from "@/components/ui/badge"; 
 import { Button } from "@/components/ui/button";
 import { mockUsers } from "@/lib/mock-data";
-import { UserRole } from "@/types";
+import { User, UserRole } from "@/types";
 import { format } from "date-fns";
 import { Edit, Trash2 } from "lucide-react";
 
-const UserTable = () => {
+interface UserTableProps {
+  onEditUser?: (user: User) => void;
+}
+
+const UserTable = ({ onEditUser }: UserTableProps) => {
   const getRoleBadge = (role: UserRole) => {
     switch (role) {
       case UserRole.ADMIN:
@@ -47,7 +51,7 @@ const UserTable = () => {
                 {user.lastLogin && format(new Date(user.lastLogin), "MMM d, yyyy")}
               </TableCell>
               <TableCell className="text-right space-x-1">
-                <Button size="icon" variant="ghost">
+                <Button size="icon" variant="ghost" onClick={() => onEditUser && onEditUser(user)}>
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button size="icon" variant="ghost" className="text-destructive">
