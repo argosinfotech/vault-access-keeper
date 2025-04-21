@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Settings = () => {
   const [passwordTimeout, setPasswordTimeout] = useState("15");
-  const [darkMode, setDarkMode] = useState(false);
   const [twoFactor, setTwoFactor] = useState(false);
   const [sessionTimeout, setSessionTimeout] = useState("30");
   
@@ -21,10 +20,8 @@ const Settings = () => {
       
       <div className="px-8 py-6">
         <Tabs defaultValue="security" className="w-full">
-          <TabsList className="grid grid-cols-3 w-[400px]">
+          <TabsList className="grid grid-cols-1 w-[200px]">
             <TabsTrigger value="security">Security</TabsTrigger>
-            <TabsTrigger value="appearance">Appearance</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
           </TabsList>
           
           <TabsContent value="security" className="space-y-4 mt-4">
@@ -32,7 +29,11 @@ const Settings = () => {
               <CardHeader>
                 <CardTitle>Security Settings</CardTitle>
                 <CardDescription>
-                  Configure security settings for the access vault
+                  Configure security settings for the access vault.
+                  <br />
+                  <span className="text-xs text-muted-foreground">
+                    (Note: Two-Factor Authentication is a UI setting only. No actual second factor is enforced yet.)
+                  </span>
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -96,69 +97,6 @@ const Settings = () => {
               </CardFooter>
             </Card>
           </TabsContent>
-          
-          <TabsContent value="appearance" className="space-y-4 mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Appearance</CardTitle>
-                <CardDescription>
-                  Customize the look and feel of the application
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <Label>Dark Mode</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Use dark theme for the application
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={darkMode} 
-                    onCheckedChange={setDarkMode} 
-                  />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button>Save Appearance</Button>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="notifications" className="space-y-4 mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Notification Settings</CardTitle>
-                <CardDescription>
-                  Configure how you receive notifications
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <Label>Email Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive email notifications for important events
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <Label>Security Alerts</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive notifications about security events
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button>Save Notification Settings</Button>
-              </CardFooter>
-            </Card>
-          </TabsContent>
         </Tabs>
       </div>
     </div>
@@ -166,3 +104,4 @@ const Settings = () => {
 };
 
 export default Settings;
+
