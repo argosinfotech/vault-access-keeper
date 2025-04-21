@@ -5,18 +5,18 @@ import CredentialGrid from "@/components/credential/CredentialGrid";
 import { Button } from "@/components/ui/button";
 import { Plus, Filter } from "lucide-react";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import CredentialForm from "@/components/credential/CredentialForm";
 import { mockCredentials } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 const Credentials = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [credentials, setCredentials] = useState([...mockCredentials]);
 
   const handleAddCredential = (data) => {
@@ -29,7 +29,7 @@ const Credentials = () => {
     };
     
     setCredentials([newCredential, ...credentials]);
-    setIsDrawerOpen(false);
+    setIsSheetOpen(false);
     toast.success("Credential added successfully");
   };
 
@@ -48,7 +48,7 @@ const Credentials = () => {
             <Button 
               size="sm" 
               className="flex items-center gap-1"
-              onClick={() => setIsDrawerOpen(true)}
+              onClick={() => setIsSheetOpen(true)}
             >
               <Plus className="h-4 w-4" />
               <span>Add New</span>
@@ -59,19 +59,19 @@ const Credentials = () => {
         <CredentialGrid credentials={credentials} />
       </div>
       
-      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent className="max-h-[90%]">
-          <DrawerHeader>
-            <DrawerTitle>Add New Credential</DrawerTitle>
-          </DrawerHeader>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent side="right" className="max-w-md ml-auto w-full shadow-lg">
+          <SheetHeader>
+            <SheetTitle>Add New Credential</SheetTitle>
+          </SheetHeader>
           <div className="px-4">
             <CredentialForm 
               onSubmit={handleAddCredential}
-              onCancel={() => setIsDrawerOpen(false)}
+              onCancel={() => setIsSheetOpen(false)}
             />
           </div>
-        </DrawerContent>
-      </Drawer>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

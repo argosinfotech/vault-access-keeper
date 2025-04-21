@@ -1,5 +1,11 @@
 
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetClose,
+} from "@/components/ui/sheet";
 import UserForm from "./UserForm";
 import { User } from "@/types";
 import { X } from "lucide-react";
@@ -13,17 +19,21 @@ interface UserDrawerProps {
 
 const UserDrawer = ({ open, mode, user, onClose }: UserDrawerProps) => {
   return (
-    <Drawer open={open} onOpenChange={onClose}>
-      <DrawerContent className="max-w-md ml-auto w-full shadow-lg">
+    <Sheet open={open} onOpenChange={onClose}>
+      <SheetContent side="right" className="max-w-md ml-auto w-full shadow-lg">
         <div className="flex flex-col h-full">
-          <DrawerHeader className="flex flex-row items-center justify-between border-b pb-3">
-            <DrawerTitle>{mode === "add" ? "Add User" : "Edit User"}</DrawerTitle>
-            <DrawerClose asChild>
-              <button aria-label="Close" className="ml-auto p-2 text-muted-foreground hover:text-foreground" onClick={onClose}>
+          <SheetHeader className="flex flex-row items-center justify-between border-b pb-3">
+            <SheetTitle>{mode === "add" ? "Add User" : "Edit User"}</SheetTitle>
+            <SheetClose asChild>
+              <button
+                aria-label="Close"
+                className="ml-auto p-2 text-muted-foreground hover:text-foreground"
+                onClick={onClose}
+              >
                 <X className="h-5 w-5" />
               </button>
-            </DrawerClose>
-          </DrawerHeader>
+            </SheetClose>
+          </SheetHeader>
           <div className="p-4">
             <UserForm
               mode={mode}
@@ -33,8 +43,8 @@ const UserDrawer = ({ open, mode, user, onClose }: UserDrawerProps) => {
             />
           </div>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   );
 };
 
