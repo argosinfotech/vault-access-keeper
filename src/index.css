@@ -8,87 +8,87 @@
 @layer base {
   :root {
     /* Amplitude-inspired Light Theme */
-    --background: 220 20% 99%;              /* almost pure white */
-    --foreground: 225 7% 20%;               /* soft charcoal gray text */
-    --card: 0 0% 100%;                      /* pure white card */
-    --card-foreground: 225 7% 20%;
+    --background: 252 100% 99%;              /* very pale purple-white */
+    --foreground: 260 40% 30%;               /* deep purple for headings/text */
+    --card: 0 0% 100%;                       /* true white card */
+    --card-foreground: 260 40% 30%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 225 7% 20%;
+    --popover-foreground: 260 40% 30%;
 
-    --primary: 220 10% 90%;                 /* pale gray for primaries */
-    --primary-foreground: 225 7% 20%;
+    --primary: 258 34% 54%;                  /* #7E69AB amplitude purple */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 260 100% 77%;              /* amplitude purple accent */
-    --secondary-foreground: 260 40% 30%;    /* deep purple */
+    --secondary: 258 100% 94%;               /* #E5DEFF soft purple */
+    --secondary-foreground: 260 40% 30%;
 
-    --muted: 220 16% 96%;                   /* muted background gray */
-    --muted-foreground: 226 15% 46%;
+    --muted: 257 57% 97%;                    /* #F5F4FB muted pale purple */
+    --muted-foreground: 260 34% 40%;
 
-    --accent: 258 97% 70%;                  /* vivid purple for accent */
-    --accent-foreground: 260 40% 30%;
+    --accent: 252 84% 76%;                   /* #9B87F5 vivid accent purple */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 340 71% 57%;              /* amplitude pink (e.g. #FF467E) */
     --destructive-foreground: 0 0% 100%;
 
     --success: 142 76.2% 36.3%;
     --success-foreground: 220 20% 99%;
 
-    --border: 220 14% 93%;                  /* very light, subtle gray border */
-    --input: 220 14% 93%;
-    --ring: 260 100% 77%;                   /* accent purple */
-    --radius: 0.5rem;
+    --border: 258 100% 94%;                  /* matches --secondary very pale purple */
+    --input: 258 100% 94%;                   /* matches --secondary very pale purple */
+    --ring: 252 84% 76%;                     /* #9B87F5 accent purple */
+    --radius: 20px;
 
-    --sidebar-background: 220 20% 99%;      /* match page background */
-    --sidebar-foreground: 225 7% 20%;
-    --sidebar-primary: 260 100% 77%;        /* purple accent */
+    --sidebar-background: 257 57% 97%;       /* very pale purple - #F5F4FB */
+    --sidebar-foreground: 260 40% 30%;
+    --sidebar-primary: 258 34% 54%;          /* #7E69AB primary purple */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 258 97% 70%;
-    --sidebar-accent-foreground: 260 40% 30%;
-    --sidebar-border: 220 14% 93%;          /* very subtle */
-    --sidebar-ring: 258 97% 70%;
+    --sidebar-accent: 252 84% 76%;           /* #9B87F5 vivid accent */
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 258 100% 94%;
+    --sidebar-ring: 252 84% 76%;
   }
 
   .dark {
-    /* No dark colors per user request, just soft gray-on-gray */
-    --background: 220 16% 93%;              /* light gray */
-    --foreground: 225 7% 20%;
+    /* Amplitude doesn't use a true dark theme, just softer grays. */
+    --background: 257 57% 97%;
+    --foreground: 260 40% 30%;
     --card: 0 0% 100%;
-    --card-foreground: 225 7% 20%;
+    --card-foreground: 260 40% 30%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 225 7% 20%;
+    --popover-foreground: 260 40% 30%;
 
-    --primary: 220 10% 90%;
-    --primary-foreground: 225 7% 20%;
+    --primary: 258 34% 54%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 260 100% 77%;
+    --secondary: 258 100% 94%;
     --secondary-foreground: 260 40% 30%;
 
-    --muted: 220 16% 96%;
-    --muted-foreground: 226 15% 46%;
+    --muted: 257 57% 97%;
+    --muted-foreground: 260 34% 40%;
 
-    --accent: 258 97% 70%; 
-    --accent-foreground: 260 40% 30%;
+    --accent: 252 84% 76%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 220 20% 99%;
+    --destructive: 340 71% 57%;
+    --destructive-foreground: 0 0% 100%;
 
     --success: 142 76.2% 36.3%;
     --success-foreground: 220 20% 99%;
 
-    --border: 220 14% 93%;
-    --input: 220 14% 93%;
-    --ring: 258 97% 70%;
+    --border: 258 100% 94%;
+    --input: 258 100% 94%;
+    --ring: 252 84% 76%;
 
-    --sidebar-background: 220 16% 93%;
-    --sidebar-foreground: 225 7% 20%;
-    --sidebar-primary: 260 100% 77%;
+    --sidebar-background: 257 57% 97%;
+    --sidebar-foreground: 260 40% 30%;
+    --sidebar-primary: 258 34% 54%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 258 97% 70%;
-    --sidebar-accent-foreground: 260 40% 30%;
-    --sidebar-border: 220 14% 93%;
-    --sidebar-ring: 258 97% 70%;
+    --sidebar-accent: 252 84% 76%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 258 100% 94%;
+    --sidebar-ring: 252 84% 76%;
   }
 }
 
@@ -99,9 +99,7 @@
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
   }
 }
-

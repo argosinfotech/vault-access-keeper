@@ -12,6 +12,7 @@ export default {
   prefix: "",
   theme: {
     fontFamily: {
+      // Amplitude uses Inter as primary
       sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
     },
     container: {
@@ -29,48 +30,48 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',         // soft gray now
-          foreground: 'hsl(var(--primary-foreground))'
+          DEFAULT: '#7E69AB',                   // amplitude purple
+          foreground: '#fff'
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',       // purple accent
-          foreground: 'hsl(var(--secondary-foreground))'
+          DEFAULT: '#E5DEFF',                   // soft secondary purple
+          foreground: '#43325D'
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))'
+          DEFAULT: '#FF467E',
+          foreground: '#fff'
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))'
+          DEFAULT: '#F5F4FB',                   // Amplitude muted bg
+          foreground: '#6E59A5'
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',         // purple accent
-          foreground: 'hsl(var(--accent-foreground))'
+          DEFAULT: '#9B87F5',                   // vivid accent purple
+          foreground: '#fff'
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))'
+          DEFAULT: '#FFF',
+          foreground: '#43325D'
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
+          DEFAULT: '#FFF',
+          foreground: '#43325D'
         },
         sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))'
+          DEFAULT: '#F5F4FB',                   // sidebar bg - subtle purple/gray
+          foreground: '#43325D',
+          primary: '#7E69AB',
+          'primary-foreground': '#fff',
+          accent: '#9B87F5',
+          'accent-foreground': '#fff',
+          border: '#E5DEFF',
+          ring: '#9B87F5'
         }
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
+        lg: '20px', // Amplitude uses very rounded corners
+        md: '12px',
+        sm: '8px'
       },
       keyframes: {
         'accordion-down': {
@@ -98,4 +99,3 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
-
