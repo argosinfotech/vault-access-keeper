@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
 import { mockUsers } from "@/lib/mock-data";
 import { supabase } from "@/lib/supabaseClient";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { toast } from "sonner";
 
 // Helper function to generate a 6-digit OTP
 function generateOtp(): string {
@@ -27,12 +29,28 @@ const LoginForm = () => {
 
   // Sends the OTP to the user's email using Supabase edge function
   async function sendOtpEmail(email: string, otp: string) {
-    // You must create and deploy a Supabase edge function called "send-otp-email"
-    // which accepts { email, otp } in the POST body and sends the email.
-    const { error } = await supabase.functions.invoke("send-otp-email", {
-      body: { email, otp }
-    });
-    if (error) throw error;
+    try {
+      // In development mode without Supabase, we'll show the OTP in a toast
+      const isSupabaseConnected = import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!isSupabaseConnected) {
+        console.log("Dev mode: OTP code is", otp);
+        toast.info(`Dev mode: Your OTP code is ${otp}`, {
+          duration: 10000,
+        });
+        return;
+      }
+
+      // If Supabase is connected, invoke the edge function
+      const { error } = await supabase.functions.invoke("send-otp-email", {
+        body: { email, otp }
+      });
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      throw new Error("Failed to send OTP email");
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,6 +92,11 @@ const LoginForm = () => {
       }
       setIsLoading(false);
     }
+  };
+
+  // Handle OTP input change
+  const handleOtpChange = (value: string) => {
+    setOtp(value);
   };
 
   return (
@@ -134,18 +157,18 @@ const LoginForm = () => {
           {step === "otp" && (
             <div className="space-y-2">
               <Label htmlFor="otp">Email OTP</Label>
-              <Input
-                id="otp"
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                pattern="[0-9]{6}"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-                autoFocus
-                placeholder="6-digit code"
-              />
+              <div className="flex justify-center py-2">
+                <InputOTP maxLength={6} value={otp} onChange={handleOtpChange}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
               <p className="text-xs text-muted-foreground text-center">
                 Enter the 6-digit code sent to: <span className="font-semibold">{email}</span>
               </p>
@@ -169,4 +192,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
