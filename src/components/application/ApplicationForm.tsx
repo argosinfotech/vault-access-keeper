@@ -29,7 +29,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface ApplicationFormProps {
-  onSubmit: () => void;
+  onSubmit: (application: Application) => void;  // Updated to accept an application parameter
   onCancel: () => void;
   defaultValues?: Partial<Application>;
 }
@@ -53,17 +53,24 @@ export default function ApplicationForm({
   const handleSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     try {
+      let application: Application;
+      
       if (defaultValues?.id) {
-        await updateApplication(defaultValues.id, data);
+        // Update existing application
+        const updatedApp = await updateApplication(defaultValues.id, data);
+        application = updatedApp;
       } else {
-        await addApplication({
+        // Create new application
+        const newApp = await addApplication({
           name: data.name,
           description: data.description,
           category: data.category,
           createdBy: "current-user-id", // In a real app, get from auth context
         });
+        application = newApp;
       }
-      onSubmit();
+      
+      onSubmit(application);
     } catch (error) {
       toast.error("Failed to save application");
       console.error(error);
