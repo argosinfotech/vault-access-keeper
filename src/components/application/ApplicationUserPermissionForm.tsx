@@ -43,11 +43,10 @@ export default function ApplicationUserPermissionForm({
 
   // Create properly typed initial category permissions
   const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => {
-    const categoryPermission: CategoryPermission = {
+    return {
       category: category,
       permission: ApplicationPermission.VIEWER
     };
-    return categoryPermission;
   });
   
   const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(initialCategoryPermissions);
@@ -85,13 +84,12 @@ export default function ApplicationUserPermissionForm({
   };
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
-    const updatedPermissions: CategoryPermission[] = categoryPermissions.map((cp) => {
+    const updatedPermissions = categoryPermissions.map((cp) => {
       if (cp.category === category) {
-        const newCategoryPerm: CategoryPermission = {
+        return {
           category: category,
           permission: permission
         };
-        return newCategoryPerm;
       }
       return cp;
     });
@@ -102,11 +100,10 @@ export default function ApplicationUserPermissionForm({
 
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
     const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => {
-      const categoryPerm: CategoryPermission = {
+      return {
         category: category,
         permission: permission
       };
-      return categoryPerm;
     });
     
     setCategoryPermissions(updatedPermissions);
