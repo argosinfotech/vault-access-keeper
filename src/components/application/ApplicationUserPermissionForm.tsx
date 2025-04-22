@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -12,7 +11,6 @@ import CategoryPermissionsAccordion from "./CategoryPermissionsAccordion";
 import UserSelectField from "./UserSelectField";
 import FormActionButtons from "./FormActionButtons";
 
-// Update the form schema to ensure CategoryPermission properties are required
 const formSchema = z.object({
   userId: z.string().min(1, "Please select a user"),
   permission: z.nativeEnum(ApplicationPermission),
@@ -41,13 +39,10 @@ export default function ApplicationUserPermissionForm({
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Create properly typed initial category permissions
-  const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => {
-    return {
-      category: category,
-      permission: ApplicationPermission.VIEWER
-    };
-  });
+  const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => ({
+    category,
+    permission: ApplicationPermission.VIEWER
+  }));
   
   const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(initialCategoryPermissions);
 
@@ -84,11 +79,11 @@ export default function ApplicationUserPermissionForm({
   };
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
-    const updatedPermissions = categoryPermissions.map((cp) => {
+    const updatedPermissions: CategoryPermission[] = categoryPermissions.map((cp) => {
       if (cp.category === category) {
         return {
-          category: category,
-          permission: permission
+          category,
+          permission
         };
       }
       return cp;
@@ -99,12 +94,10 @@ export default function ApplicationUserPermissionForm({
   };
 
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
-    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => {
-      return {
-        category: category,
-        permission: permission
-      };
-    });
+    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => ({
+      category,
+      permission
+    }));
     
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
