@@ -25,6 +25,22 @@ export enum CategoryType {
   OTHER = "Other",
 }
 
+// Application permission level
+export enum ApplicationPermission {
+  ADMIN = "admin",     // Can manage app and all its credentials
+  VIEWER = "viewer",   // Can only view app and its credentials
+}
+
+// User application permission
+export interface UserApplicationPermission {
+  id: string;
+  userId: string;
+  applicationId: string;
+  permission: ApplicationPermission;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
 // User type
 export interface User {
   id: string;

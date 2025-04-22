@@ -1,4 +1,4 @@
-import { User, UserRole, Application, Credential, AuditLog, EnvironmentType, CategoryType } from "@/types";
+import { User, UserRole, Application, Credential, AuditLog, EnvironmentType, CategoryType, ApplicationPermission, UserApplicationPermission } from "@/types";
 
 // Mock current user (for development)
 export const currentUser: User = {
@@ -219,5 +219,30 @@ export const mockAuditLogs: AuditLog[] = [
     targetType: "credential",
     details: "Viewed Customer DB credentials",
     timestamp: new Date("2024-01-15T14:05:00")
+  }
+];
+
+// Add mock application permissions
+export const mockApplicationPermissions: UserApplicationPermission[] = [
+  {
+    id: "perm-1",
+    userId: "user-2",
+    applicationId: "app-1",
+    permission: ApplicationPermission.ADMIN,
+    createdAt: new Date("2023-12-05T08:30:00"),
+  },
+  {
+    id: "perm-2",
+    userId: "user-3",
+    applicationId: "app-1",
+    permission: ApplicationPermission.VIEWER,
+    createdAt: new Date("2023-12-10T14:15:00"),
+  },
+  {
+    id: "perm-3",
+    userId: "user-3",
+    applicationId: "app-2",
+    permission: ApplicationPermission.VIEWER,
+    createdAt: new Date("2023-12-15T16:45:00"),
   }
 ];

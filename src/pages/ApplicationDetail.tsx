@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -16,6 +17,8 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { X } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ApplicationUserPermissions from "@/components/application/ApplicationUserPermissions";
 
 const ApplicationDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,6 +27,7 @@ const ApplicationDetail = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [editingCredential, setEditingCredential] = useState<Credential | null>(null);
+  const [activeTab, setActiveTab] = useState("credentials");
 
   useEffect(() => {
     if (!id) {
@@ -91,17 +95,30 @@ const ApplicationDetail = () => {
     <div className="flex-1">
       <Header title={applicationName} />
       <div className="px-8 py-6">
-        <div className="flex justify-between mb-6">
-          <h2 className="text-xl font-semibold">Credentials</h2>
-          <Button size="sm" className="flex items-center gap-1" onClick={handleAddCredential}>
-            <Plus className="h-4 w-4" />
-            <span>Add Credential</span>
-          </Button>
-        </div>
-        <CredentialTable
-          credentials={credentials}
-          onEdit={handleEditCredential}
-        />
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList>
+            <TabsTrigger value="credentials">Credentials</TabsTrigger>
+            <TabsTrigger value="users">User Access</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="credentials">
+            <div className="flex justify-between mb-6 pt-4">
+              <h2 className="text-xl font-semibold">Credentials</h2>
+              <Button size="sm" className="flex items-center gap-1" onClick={handleAddCredential}>
+                <Plus className="h-4 w-4" />
+                <span>Add Credential</span>
+              </Button>
+            </div>
+            <CredentialTable
+              credentials={credentials}
+              onEdit={handleEditCredential}
+            />
+          </TabsContent>
+          
+          <TabsContent value="users" className="pt-4">
+            <ApplicationUserPermissions applicationId={applicationId} />
+          </TabsContent>
+        </Tabs>
       </div>
 
       <Sheet open={drawerOpen} onOpenChange={handleCloseDrawer}>
