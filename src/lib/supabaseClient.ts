@@ -14,62 +14,93 @@ const createMockClient = () => {
     return Promise.resolve({ data, error });
   };
   
+  // Helper function to create consistent mock method chains
+  const createMockChain = () => {
+    const methods = {
+      single: () => createMockResponse({ id: "mock-id" }),
+      eq: () => methods,
+      neq: () => methods,
+      lt: () => methods,
+      lte: () => methods,
+      gt: () => methods,
+      gte: () => methods,
+      like: () => methods,
+      ilike: () => methods,
+      in: () => methods,
+      contains: () => methods,
+      containedBy: () => methods,
+      rangeLt: () => methods,
+      rangeGt: () => methods,
+      rangeGte: () => methods,
+      rangeLte: () => methods,
+      textSearch: () => methods,
+      match: () => methods,
+      not: () => methods,
+      filter: () => methods,
+      or: () => methods,
+      select: () => methods,
+      order: () => createMockResponse([]),
+      limit: () => methods,
+      range: () => methods,
+      maybeSingle: () => createMockResponse({ id: "mock-id" }),
+    };
+    return methods;
+  };
+
   return {
     auth: {
       getUser: () => createMockResponse({ user: null }),
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
     },
-    from: () => ({
-      select: () => ({
-        eq: () => ({
-          eq: () => ({
-            select: () => ({
-              single: () => createMockResponse({ id: "mock-id" })
+    from: (table: string) => {
+      const methods = {
+        select: () => createMockChain(),
+        insert: (values: any) => ({
+          select: () => ({
+            single: () => createMockResponse({ 
+              id: "mock-id", 
+              user_id: "user-id", 
+              application_id: "app-id", 
+              permission: "viewer", 
+              created_at: new Date().toISOString(), 
+              updated_at: new Date().toISOString() 
             }),
+            maybeSingle: () => createMockResponse({ id: "mock-id" }),
           }),
-          single: () => createMockResponse({ id: "mock-id" }),
-          order: () => createMockResponse([]),
+          ...createMockChain()
         }),
-        order: () => createMockResponse([]),
-      }),
-      insert: () => ({
-        select: () => ({
-          single: () => createMockResponse({ 
-            id: "mock-id", 
-            user_id: "user-id", 
-            application_id: "app-id", 
-            permission: "viewer", 
-            created_at: new Date().toISOString(), 
-            updated_at: new Date().toISOString() 
-          }),
-        }),
-      }),
-      update: () => ({
-        eq: () => ({
-          eq: () => ({
-            select: () => ({
-              single: () => createMockResponse({ 
-                id: "mock-id", 
-                user_id: "user-id", 
-                application_id: "app-id", 
-                permission: "admin", 
-                created_at: new Date().toISOString(), 
-                updated_at: new Date().toISOString() 
+        update: (values: any) => ({
+          eq: (column: string, value: any) => ({
+            eq: (column2: string, value2: any) => ({
+              select: () => ({
+                single: () => createMockResponse({ 
+                  id: "mock-id", 
+                  user_id: "user-id", 
+                  application_id: "app-id", 
+                  permission: "admin", 
+                  created_at: new Date().toISOString(), 
+                  updated_at: new Date().toISOString() 
+                }),
               }),
             }),
+            select: () => ({
+              single: () => createMockResponse({ id: "mock-id" }),
+            }),
+            ...createMockChain()
           }),
-          select: () => ({
-            single: () => createMockResponse({ id: "mock-id" }),
+          ...createMockChain()
+        }),
+        delete: () => ({
+          eq: (column: string, value: any) => ({
+            eq: (column2: string, value2: any) => createMockResponse(),
+            ...createMockChain()
           }),
+          ...createMockChain()
         }),
-      }),
-      delete: () => ({
-        eq: () => ({
-          eq: () => createMockResponse(),
-          order: () => createMockResponse([]),
-        }),
-      }),
-    }),
+        ...createMockChain()
+      };
+      return methods;
+    },
     functions: {
       invoke: (name: string, options: any) => {
         console.log(`Mocked function call to ${name}`, options);

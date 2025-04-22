@@ -24,10 +24,15 @@ export async function getUsers(): Promise<User[]> {
 
 // Get current user's row (self, via RLS)
 export async function getCurrentUser(): Promise<User | null> {
+  const userResult = await supabase.auth.getUser();
+  const userId = userResult.data?.user?.id;
+  
+  if (!userId) return null;
+  
   const { data, error } = await supabase
     .from("users")
     .select("*")
-    .eq("id", (supabase.auth.getUser()).then(u => u.data?.user?.id))
+    .eq("id", userId)
     .single();
   if (error && error.code !== "PGRST116") throw error;
   if (!data) return null;
