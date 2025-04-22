@@ -39,6 +39,10 @@ export interface UserApplicationPermission {
   permission: ApplicationPermission;
   createdAt: Date;
   updatedAt?: Date;
+  userName?: string;
+  userEmail?: string;
+  applicationName?: string;
+  applicationDescription?: string;
 }
 
 // User type

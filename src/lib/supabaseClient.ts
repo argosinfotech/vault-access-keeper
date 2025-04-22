@@ -17,6 +17,11 @@ const createMockClient = () => {
     from: () => ({
       select: () => ({
         eq: () => ({
+          eq: () => ({
+            select: () => ({
+              single: () => Promise.resolve({ data: null, error: null }),
+            }),
+          }),
           single: () => Promise.resolve({ data: null, error: null }),
           order: () => Promise.resolve({ data: [], error: null }),
         }),
@@ -24,18 +29,46 @@ const createMockClient = () => {
       }),
       insert: () => ({
         select: () => ({
-          single: () => Promise.resolve({ data: { id: "mock-id" }, error: null }),
+          single: () => Promise.resolve({ 
+            data: { 
+              id: "mock-id", 
+              user_id: "user-id", 
+              application_id: "app-id", 
+              permission: "viewer", 
+              created_at: new Date().toISOString(), 
+              updated_at: new Date().toISOString() 
+            }, 
+            error: null 
+          }),
         }),
       }),
       update: () => ({
         eq: () => ({
+          eq: () => ({
+            select: () => ({
+              single: () => Promise.resolve({ 
+                data: { 
+                  id: "mock-id", 
+                  user_id: "user-id", 
+                  application_id: "app-id", 
+                  permission: "admin", 
+                  created_at: new Date().toISOString(), 
+                  updated_at: new Date().toISOString() 
+                }, 
+                error: null 
+              }),
+            }),
+          }),
           select: () => ({
             single: () => Promise.resolve({ data: { id: "mock-id" }, error: null }),
           }),
         }),
       }),
       delete: () => ({
-        eq: () => Promise.resolve({ error: null }),
+        eq: () => ({
+          eq: () => Promise.resolve({ error: null }),
+          order: () => Promise.resolve({ data: [], error: null }),
+        }),
       }),
     }),
     functions: {

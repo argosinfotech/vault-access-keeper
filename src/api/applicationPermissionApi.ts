@@ -4,7 +4,7 @@ import { UserApplicationPermission, ApplicationPermission } from "@/types";
 
 // Get all users with permissions for a specific application
 export async function getUsersWithPermissions(applicationId: string): Promise<UserApplicationPermission[]> {
-  const { data, error } = await supabase
+  const response = await supabase
     .from("user_application_permissions")
     .select(`
       id,
@@ -17,9 +17,9 @@ export async function getUsersWithPermissions(applicationId: string): Promise<Us
     `)
     .eq("application_id", applicationId);
 
-  if (error) throw error;
+  if (response.error) throw response.error;
   
-  return (data ?? []).map((p: any) => ({
+  return (response.data ?? []).map((p: any) => ({
     id: p.id,
     userId: p.user_id,
     applicationId: p.application_id,
@@ -33,7 +33,7 @@ export async function getUsersWithPermissions(applicationId: string): Promise<Us
 
 // Get applications a user has access to
 export async function getUserApplications(userId: string): Promise<UserApplicationPermission[]> {
-  const { data, error } = await supabase
+  const response = await supabase
     .from("user_application_permissions")
     .select(`
       id,
@@ -46,9 +46,9 @@ export async function getUserApplications(userId: string): Promise<UserApplicati
     `)
     .eq("user_id", userId);
 
-  if (error) throw error;
+  if (response.error) throw response.error;
   
-  return (data ?? []).map((p: any) => ({
+  return (response.data ?? []).map((p: any) => ({
     id: p.id,
     userId: p.user_id,
     applicationId: p.application_id,
@@ -66,26 +66,50 @@ export async function grantApplicationPermission(
   applicationId: string, 
   permission: ApplicationPermission
 ): Promise<UserApplicationPermission> {
-  const { data, error } = await supabase
-    .from("user_application_permissions")
-    .upsert({
-      user_id: userId,
-      application_id: applicationId,
-      permission,
-      updated_at: new Date()
-    }, { onConflict: 'user_id, application_id' })
-    .select()
-    .single();
+  // In real implementation, Supabase supports upsert
+  // In mock implementation, we need to handle it differently
+  const recordData = {
+    user_id: userId,
+    application_id: applicationId,
+    permission,
+    updated_at: new Date().toISOString()
+  };
 
-  if (error) throw error;
+  // First try to update existing record
+  const existingResponse = await supabase
+    .from("user_application_permissions")
+    .select()
+    .eq("user_id", userId)
+    .eq("application_id", applicationId);
+
+  let response;
+  if (existingResponse.data && existingResponse.data.length > 0) {
+    // Update existing record
+    response = await supabase
+      .from("user_application_permissions")
+      .update(recordData)
+      .eq("user_id", userId)
+      .eq("application_id", applicationId)
+      .select()
+      .single();
+  } else {
+    // Insert new record
+    response = await supabase
+      .from("user_application_permissions")
+      .insert(recordData)
+      .select()
+      .single();
+  }
+
+  if (response.error) throw response.error;
   
   return {
-    id: data.id,
-    userId: data.user_id,
-    applicationId: data.application_id,
-    permission: data.permission as ApplicationPermission,
-    createdAt: new Date(data.created_at),
-    updatedAt: new Date(data.updated_at),
+    id: response.data.id,
+    userId: response.data.user_id,
+    applicationId: response.data.application_id,
+    permission: response.data.permission as ApplicationPermission,
+    createdAt: new Date(response.data.created_at),
+    updatedAt: new Date(response.data.updated_at),
   };
 }
 
@@ -94,11 +118,11 @@ export async function removeApplicationPermission(
   userId: string, 
   applicationId: string
 ): Promise<void> {
-  const { error } = await supabase
+  const response = await supabase
     .from("user_application_permissions")
     .delete()
     .eq("user_id", userId)
     .eq("application_id", applicationId);
 
-  if (error) throw error;
+  if (response.error) throw response.error;
 }
