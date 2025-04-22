@@ -33,8 +33,9 @@ const UserDrawer = ({
     if (onOpenChange) onOpenChange(false);
   };
 
-  const handleCompleted = (updatedUser: User) => {
-    if (onSave) onSave(updatedUser);
+  const handleCompleted = () => {
+    // Just call onClose without passing the user object
+    // The UserForm component will handle saving the user data
     handleClose();
   };
 

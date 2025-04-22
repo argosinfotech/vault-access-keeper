@@ -19,7 +19,7 @@ interface ApplicationFieldProps {
 export function ApplicationField({ form, applications }: ApplicationFieldProps) {
   const appOptions = useMemo(() => {
     return [
-      { id: "", name: "None (Standalone credential)" }, 
+      { id: "none", name: "None (Standalone credential)" }, 
       ...applications.map(app => ({
         id: app.id,
         name: app.name
@@ -36,7 +36,7 @@ export function ApplicationField({ form, applications }: ApplicationFieldProps) 
           <FormLabel>Application (Optional)</FormLabel>
           <Select
             onValueChange={field.onChange}
-            value={field.value || ""}
+            value={field.value || "none"}
           >
             <FormControl>
               <SelectTrigger>
