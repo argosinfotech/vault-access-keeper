@@ -94,7 +94,7 @@ export default function ApplicationUserPermissionForm({
   // Set all category permissions to match the main permission
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
     const updatedPermissions = categoryPermissions.map(cp => ({
-      ...cp,
+      category: cp.category,
       permission
     }));
     setCategoryPermissions(updatedPermissions);

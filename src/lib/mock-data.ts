@@ -1,3 +1,4 @@
+
 import { User, UserRole, Application, Credential, AuditLog, EnvironmentType, CategoryType, ApplicationPermission, UserApplicationPermission } from "@/types";
 
 // Mock current user (for development)
@@ -229,6 +230,32 @@ export const mockApplicationPermissions: UserApplicationPermission[] = [
     userId: "user-2",
     applicationId: "app-1",
     permission: ApplicationPermission.ADMIN,
+    categoryPermissions: [
+      {
+        category: CategoryType.STAGING_HOSTING,
+        permission: ApplicationPermission.ADMIN
+      },
+      {
+        category: CategoryType.PRODUCTION_HOSTING,
+        permission: ApplicationPermission.ADMIN
+      },
+      {
+        category: CategoryType.STAGING_APPLICATION,
+        permission: ApplicationPermission.ADMIN
+      },
+      {
+        category: CategoryType.LIVE_APPLICATION,
+        permission: ApplicationPermission.ADMIN
+      },
+      {
+        category: CategoryType.QA_APPLICATION,
+        permission: ApplicationPermission.ADMIN
+      },
+      {
+        category: CategoryType.OTHER,
+        permission: ApplicationPermission.ADMIN
+      }
+    ],
     createdAt: new Date("2023-12-05T08:30:00"),
   },
   {
@@ -236,6 +263,32 @@ export const mockApplicationPermissions: UserApplicationPermission[] = [
     userId: "user-3",
     applicationId: "app-1",
     permission: ApplicationPermission.VIEWER,
+    categoryPermissions: [
+      {
+        category: CategoryType.STAGING_HOSTING,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.PRODUCTION_HOSTING,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.STAGING_APPLICATION,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.LIVE_APPLICATION,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.QA_APPLICATION,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.OTHER,
+        permission: ApplicationPermission.VIEWER
+      }
+    ],
     createdAt: new Date("2023-12-10T14:15:00"),
   },
   {
@@ -243,6 +296,32 @@ export const mockApplicationPermissions: UserApplicationPermission[] = [
     userId: "user-3",
     applicationId: "app-2",
     permission: ApplicationPermission.VIEWER,
+    categoryPermissions: [
+      {
+        category: CategoryType.STAGING_HOSTING,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.PRODUCTION_HOSTING,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.STAGING_APPLICATION,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.LIVE_APPLICATION,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.QA_APPLICATION,
+        permission: ApplicationPermission.VIEWER
+      },
+      {
+        category: CategoryType.OTHER,
+        permission: ApplicationPermission.VIEWER
+      }
+    ],
     createdAt: new Date("2023-12-15T16:45:00"),
   }
 ];
