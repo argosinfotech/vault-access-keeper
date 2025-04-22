@@ -43,6 +43,7 @@ export default function ApplicationUserPermissionForm({
   onCancel 
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Initialize with all category types and default permission
   const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(
     Object.values(CategoryType).map(category => ({
       category,
@@ -85,7 +86,7 @@ export default function ApplicationUserPermissionForm({
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
     const updatedPermissions = categoryPermissions.map(cp => 
-      cp.category === category ? { ...cp, permission } : cp
+      cp.category === category ? { category, permission } : cp
     );
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
@@ -93,8 +94,8 @@ export default function ApplicationUserPermissionForm({
 
   // Set all category permissions to match the main permission
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
-    const updatedPermissions = categoryPermissions.map(cp => ({
-      category: cp.category,
+    const updatedPermissions = Object.values(CategoryType).map(category => ({
+      category,
       permission
     }));
     setCategoryPermissions(updatedPermissions);
