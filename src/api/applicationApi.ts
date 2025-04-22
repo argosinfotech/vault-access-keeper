@@ -1,6 +1,6 @@
 
 import { supabase } from "@/lib/supabaseClient";
-import { Application, CategoryType } from "@/types";
+import { Application } from "@/types";
 
 // Get all applications
 export async function getApplications(): Promise<Application[]> {
@@ -13,10 +13,10 @@ export async function getApplications(): Promise<Application[]> {
     id: app.id,
     name: app.name,
     description: app.description || undefined,
-    category: app.category as CategoryType,
     createdBy: app.created_by,
     createdAt: new Date(app.created_at),
     updatedAt: new Date(app.updated_at),
+    // category removed
   }));
 }
 
@@ -32,10 +32,10 @@ export async function getApplicationById(id: string): Promise<Application> {
     id: data.id,
     name: data.name,
     description: data.description || undefined,
-    category: data.category as CategoryType,
     createdBy: data.created_by,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
+    // category removed
   };
 }
 
@@ -45,6 +45,7 @@ export async function addApplication(newApp: Omit<Application, "id" | "createdAt
     .from("applications")
     .insert([{
       ...newApp
+      // no category
     }])
     .select()
     .single();
@@ -53,10 +54,10 @@ export async function addApplication(newApp: Omit<Application, "id" | "createdAt
     id: data.id,
     name: data.name,
     description: data.description || undefined,
-    category: data.category as CategoryType,
     createdBy: data.created_by,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
+    // category removed
   };
 }
 
@@ -64,7 +65,10 @@ export async function addApplication(newApp: Omit<Application, "id" | "createdAt
 export async function updateApplication(id: string, changes: Partial<Application>): Promise<Application> {
   const { data, error } = await supabase
     .from("applications")
-    .update(changes)
+    .update({
+      ...changes
+      // no category
+    })
     .eq("id", id)
     .select()
     .single();
@@ -73,10 +77,10 @@ export async function updateApplication(id: string, changes: Partial<Application
     id: data.id,
     name: data.name,
     description: data.description || undefined,
-    category: data.category as CategoryType,
     createdBy: data.created_by,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
+    // category removed
   };
 }
 

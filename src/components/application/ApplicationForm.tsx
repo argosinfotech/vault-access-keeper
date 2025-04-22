@@ -7,14 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Application, CategoryType } from "@/types";
+import { Application } from "@/types";
 import { toast } from "sonner";
 import { addApplication, updateApplication } from "@/api/applicationApi";
 
@@ -23,13 +16,13 @@ const formSchema = z.object({
     message: "Name must be at least 2 characters.",
   }),
   description: z.string().optional(),
-  category: z.nativeEnum(CategoryType),
+  // category removed
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface ApplicationFormProps {
-  onSubmit: (application: Application) => void;  // Updated to accept an application parameter
+  onSubmit: (application: Application) => void;
   onCancel: () => void;
   defaultValues?: Partial<Application>;
 }
@@ -46,7 +39,7 @@ export default function ApplicationForm({
     defaultValues: {
       name: defaultValues?.name || "",
       description: defaultValues?.description || "",
-      category: defaultValues?.category || CategoryType.APPLICATION,
+      // category removed
     },
   });
 
@@ -54,22 +47,22 @@ export default function ApplicationForm({
     setIsSubmitting(true);
     try {
       let application: Application;
-      
       if (defaultValues?.id) {
-        // Update existing application
-        const updatedApp = await updateApplication(defaultValues.id, data);
+        // Update existing application, don't provide category anymore
+        const updatedApp = await updateApplication(defaultValues.id, {
+          name: data.name,
+          description: data.description,
+        });
         application = updatedApp;
       } else {
-        // Create new application
+        // Create new application, don't provide category anymore
         const newApp = await addApplication({
           name: data.name,
           description: data.description,
-          category: data.category,
           createdBy: "current-user-id", // In a real app, get from auth context
         });
         application = newApp;
       }
-      
       onSubmit(application);
     } catch (error) {
       toast.error("Failed to save application");
@@ -95,35 +88,6 @@ export default function ApplicationForm({
             </FormItem>
           )}
         />
-        
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(CategoryType).map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
         <FormField
           control={form.control}
           name="description"
@@ -141,7 +105,6 @@ export default function ApplicationForm({
             </FormItem>
           )}
         />
-
         <div className="flex justify-end space-x-4 pt-4">
           <Button 
             type="button" 

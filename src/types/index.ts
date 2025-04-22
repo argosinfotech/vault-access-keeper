@@ -40,7 +40,6 @@ export interface Application {
   id: string;
   name: string;
   description?: string;
-  category: CategoryType;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
