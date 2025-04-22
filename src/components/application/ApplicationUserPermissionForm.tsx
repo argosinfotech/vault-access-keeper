@@ -56,7 +56,11 @@ export default function ApplicationUserPermissionForm({
     defaultValues: {
       userId: "",
       permission: ApplicationPermission.VIEWER,
-      categoryPermissions
+      // Explicitly define category and permission as non-optional by creating proper CategoryPermission objects
+      categoryPermissions: Object.values(CategoryType).map(category => ({
+        category: category,
+        permission: ApplicationPermission.VIEWER
+      })) as CategoryPermission[]
     }
   });
 
