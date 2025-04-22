@@ -1,11 +1,12 @@
 
 import { useState } from "react";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Credential, EnvironmentType, CategoryType } from "@/types";
 import { Eye, EyeOff, Copy, ExternalLink } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { toast } from "sonner";
 
 interface CredentialCardProps {
   credential: Credential;
@@ -19,9 +20,9 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
       case EnvironmentType.PRODUCTION:
         return "bg-destructive text-destructive-foreground";
       case EnvironmentType.STAGING:
-        return "bg-warning text-warning-foreground";
+        return "bg-yellow-500 text-white";
       case EnvironmentType.DEVELOPMENT:
-        return "bg-success text-success-foreground";
+        return "bg-green-500 text-white";
       default:
         return "bg-secondary text-secondary-foreground";
     }
@@ -44,78 +45,76 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
     }
   };
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
-    // Could add a toast notification here
+    toast.success(`${type} copied to clipboard`);
   };
 
   return (
-    <Card className="w-full shadow-md hover:shadow-lg transition-shadow">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">{getCategoryIcon(credential.category)}</span>
-            <h3 className="font-semibold text-lg">{credential.title}</h3>
+    <Card className="group hover:shadow-md transition-shadow duration-200">
+      <CardHeader className="p-4 pb-2">
+        <div className="flex justify-between items-start gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-xl flex-shrink-0">{getCategoryIcon(credential.category)}</span>
+            <h3 className="font-medium text-sm truncate">{credential.title}</h3>
           </div>
-          <Badge className={getEnvironmentColor(credential.environment)}>
+          <Badge className={`${getEnvironmentColor(credential.environment)} text-xs`}>
             {credential.environment}
           </Badge>
         </div>
       </CardHeader>
       
-      <CardContent>
-        <div className="space-y-3">
-          <div className="grid grid-cols-[120px_1fr] gap-2">
-            <span className="text-sm text-muted-foreground">Username:</span>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-sm">{credential.username}</span>
+      <CardContent className="p-4 pt-2 space-y-2">
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2 text-sm">
+            <span className="text-muted-foreground">Username</span>
+            <div className="flex items-center gap-1">
+              <span className="font-mono text-xs truncate max-w-[120px]">{credential.username}</span>
               <Button 
                 size="icon" 
                 variant="ghost" 
-                className="h-5 w-5" 
-                onClick={() => copyToClipboard(credential.username)}
+                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => copyToClipboard(credential.username, "Username")}
               >
                 <Copy className="h-3 w-3" />
               </Button>
             </div>
           </div>
-          
-          <div className="grid grid-cols-[120px_1fr] gap-2">
-            <span className="text-sm text-muted-foreground">Password:</span>
-            <div className="flex items-center gap-2">
-              {showPassword ? (
-                <span className="font-medium text-sm">{credential.password}</span>
-              ) : (
-                <span className="font-medium text-sm">••••••••••••••</span>
-              )}
-              <Button 
-                size="icon" 
-                variant="ghost" 
-                className="h-5 w-5"
+
+          <div className="flex items-center justify-between gap-2 text-sm">
+            <span className="text-muted-foreground">Password</span>
+            <div className="flex items-center gap-1">
+              <span className="font-mono text-xs truncate max-w-[120px]">
+                {showPassword ? credential.password : '••••••••'}
+              </span>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
               </Button>
-              <Button 
-                size="icon" 
-                variant="ghost" 
-                className="h-5 w-5" 
-                onClick={() => copyToClipboard(credential.password)}
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => copyToClipboard(credential.password, "Password")}
               >
                 <Copy className="h-3 w-3" />
               </Button>
             </div>
           </div>
-          
+
           {credential.url && (
-            <div className="grid grid-cols-[120px_1fr] gap-2">
-              <span className="text-sm text-muted-foreground">URL:</span>
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-sm truncate max-w-[200px]">{credential.url}</span>
-                <Button 
-                  size="icon" 
-                  variant="ghost" 
-                  className="h-5 w-5"
+            <div className="flex items-center justify-between gap-2 text-sm">
+              <span className="text-muted-foreground">URL</span>
+              <div className="flex items-center gap-1">
+                <span className="font-mono text-xs truncate max-w-[120px]">{credential.url}</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => window.open(credential.url, "_blank")}
                 >
                   <ExternalLink className="h-3 w-3" />
@@ -123,20 +122,12 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
               </div>
             </div>
           )}
-          
-          {credential.notes && (
-            <div className="grid grid-cols-[120px_1fr] gap-2">
-              <span className="text-sm text-muted-foreground">Notes:</span>
-              <span className="text-sm">{credential.notes}</span>
-            </div>
-          )}
+        </div>
+
+        <div className="pt-2 text-[10px] text-muted-foreground border-t">
+          Updated {formatDistanceToNow(credential.updatedAt)} ago
         </div>
       </CardContent>
-      
-      <CardFooter className="text-xs text-muted-foreground pt-2 flex justify-between">
-        <span>Created: {formatDistanceToNow(new Date(credential.createdAt))} ago</span>
-        <span>Last updated: {formatDistanceToNow(new Date(credential.updatedAt))} ago</span>
-      </CardFooter>
     </Card>
   );
 };
