@@ -25,8 +25,8 @@ export default function ApplicationsDrawer({
   onSave, 
   application 
 }: ApplicationsDrawerProps) {
-  const handleClose = () => {
-    onClose();
+  const handleFormSubmit = (application: Application) => {
+    onSave(application);
   };
 
   return (
@@ -42,7 +42,7 @@ export default function ApplicationsDrawer({
                 aria-label="Close"
                 variant="ghost"
                 className="ml-auto h-8 w-8 p-0"
-                onClick={handleClose}
+                onClick={onClose}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -51,8 +51,8 @@ export default function ApplicationsDrawer({
           <div className="p-4">
             <ApplicationForm
               defaultValues={application}
-              onSubmit={onSave}
-              onCancel={handleClose}
+              onSubmit={handleFormSubmit}
+              onCancel={onClose}
             />
           </div>
         </div>

@@ -1,32 +1,35 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import CredentialTable from "@/components/credential/CredentialTable";
 import { Button } from "@/components/ui/button";
-import { Plus, Apps } from "lucide-react";
+import { Plus, LayoutGrid } from "lucide-react"; // Changed Apps to LayoutGrid
 import CredentialDrawer from "@/components/credential/CredentialDrawer";
 import ApplicationsDrawer from "@/components/application/ApplicationsDrawer";
-import { Application } from "@/types";
+import { Application, Credential } from "@/types";
 import { mockApplications } from "@/lib/mock-data";
 
 const Credentials = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [appsDrawerOpen, setAppsDrawerOpen] = useState(false);
-  const [editCredential, setEditCredential] = useState(null);
-  const [credentials, setCredentials] = useState([]);
-  const [applications, setApplications] = useState(mockApplications);
+  const [editCredential, setEditCredential] = useState<Credential | null>(null);
+  const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [applications, setApplications] = useState<Application[]>(mockApplications);
   const navigate = useNavigate();
 
   const handleAddCredential = (newCredential: Partial<Credential>) => {
-    const credentialToAdd: Credential = {
+    const credentialToAdd = {
       ...newCredential,
       id: `credential-${Date.now()}`,
       createdAt: new Date(),
+      updatedAt: new Date(),
       title: newCredential.title || "Untitled",
       username: newCredential.username || "Unknown",
       password: newCredential.password || "N/A",
       environment: newCredential.environment || "development",
       category: newCredential.category || "application",
+      createdBy: "user-1",
     } as Credential;
 
     setCredentials([...credentials, credentialToAdd]);
@@ -54,11 +57,13 @@ const Credentials = () => {
 
   const handleApplicationSave = (application: Application) => {
     if (application.id) {
+      // Edit existing application
       setApplications(applications.map(app => 
         app.id === application.id ? application : app
       ));
     } else {
-      const newApp = {
+      // Add new application
+      const newApp: Application = {
         ...application,
         id: `app-${Date.now()}`,
         createdAt: new Date(),
@@ -83,7 +88,7 @@ const Credentials = () => {
               className="flex items-center gap-1"
               onClick={() => setAppsDrawerOpen(true)}
             >
-              <Apps className="h-4 w-4" />
+              <LayoutGrid className="h-4 w-4" /> {/* Changed Apps to LayoutGrid */}
               <span>Manage Apps</span>
             </Button>
             <Button 
