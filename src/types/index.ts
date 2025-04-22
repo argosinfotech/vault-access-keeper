@@ -15,14 +15,14 @@ export enum EnvironmentType {
   TESTING = "testing",
 }
 
-// Category types for organizing credentials
+// Category types for organizing credentials (updated to fixed list)
 export enum CategoryType {
-  APPLICATION = "application",
-  DATABASE = "database",
-  HOSTING = "hosting",
-  API = "api", 
-  EMAIL = "email",
-  OTHER = "other",
+  STAGING_HOSTING = "Staging Hosting",
+  PRODUCTION_HOSTING = "Production Hosting",
+  STAGING_APPLICATION = "Staging Application",
+  LIVE_APPLICATION = "Live Application",
+  QA_APPLICATION = "QA Application",
+  OTHER = "Other",
 }
 
 // User type
