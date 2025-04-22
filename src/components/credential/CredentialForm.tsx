@@ -1,128 +1,94 @@
 
 import { useState } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Credential, EnvironmentType, CategoryType } from "@/types";
-import { toast } from "sonner";
-import { BasicInfoFields } from "./form/BasicInfoFields";
-import { AccessFields } from "./form/AccessFields";
-import { AdditionalFields } from "./form/AdditionalFields";
-import { ApplicationField } from "./form/ApplicationField";
-import { addCredential, updateCredential } from "@/api/credentialApi";
-import { useQuery } from "@tanstack/react-query";
-import { getApplications } from "@/api/applicationApi";
+import { useForm } from "react-hook-form";
+import { Credential, CategoryType, EnvironmentType } from "@/types";
+import { mockApplications } from "@/lib/mock-data";
+import { BasicInfoFields } from "@/components/credential/form/BasicInfoFields";
+import { AccessFields } from "@/components/credential/form/AccessFields";
+import { AdditionalFields } from "@/components/credential/form/AdditionalFields";
+import { ApplicationField } from "@/components/credential/form/ApplicationField";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
-  url: z.string().url({
-    message: "Please enter a valid URL.",
-  }).optional().or(z.literal('')),
-  environment: z.nativeEnum(EnvironmentType),
-  category: z.nativeEnum(CategoryType),
+const credentialSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+  username: z.string().min(1, { message: "Username is required" }),
+  password: z.string().min(1, { message: "Password is required" }),
+  url: z.string().optional(),
+  environment: z.string(),
+  category: z.string(),
   applicationId: z.string().optional(),
   notes: z.string().optional(),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof credentialSchema>;
 
 interface CredentialFormProps {
-  onSubmit: (data: FormValues) => void;
+  credential?: Credential;
+  onSave: (credential: Partial<Credential>) => void;
   onCancel: () => void;
-  defaultValues?: Partial<FormValues>;
-  applicationMode?: boolean;
 }
 
-export default function CredentialForm({ 
-  onSubmit, 
-  onCancel, 
-  defaultValues,
-  applicationMode = false
-}: CredentialFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const CredentialForm = ({ credential, onSave, onCancel }: CredentialFormProps) => {
+  const [showPassword, setShowPassword] = useState(false);
 
-  const { data: applications } = useQuery({
-    queryKey: ['applications'],
-    queryFn: getApplications,
-    enabled: !applicationMode // Only fetch applications in regular mode
-  });
+  const defaultValues: FormValues = {
+    title: credential?.title || "",
+    username: credential?.username || "",
+    password: credential?.password || "",
+    url: credential?.url || "",
+    environment: credential?.environment || EnvironmentType.DEVELOPMENT,
+    category: credential?.category || CategoryType.APPLICATION,
+    applicationId: credential?.applicationId || "",
+    notes: credential?.notes || "",
+  };
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: defaultValues?.title || "",
-      username: defaultValues?.username || "",
-      password: defaultValues?.password || "",
-      url: defaultValues?.url || "",
-      environment: defaultValues?.environment || EnvironmentType.DEVELOPMENT,
-      category: defaultValues?.category || CategoryType.APPLICATION,
-      applicationId: defaultValues?.applicationId || undefined,
-      notes: defaultValues?.notes || "",
-    },
+    resolver: zodResolver(credentialSchema),
+    defaultValues,
   });
 
-  const handleSubmit = async (data: FormValues) => {
-    setIsSubmitting(true);
-    try {
-      // In a real app, this should be connected to your auth system
-      const userId = "current-user-id"; 
-      
-      const credentialData = {
-        ...data,
-        createdBy: userId,
-      };
-      
-      await addCredential(credentialData);
-      onSubmit(data);
-      toast.success("Credential saved successfully!");
-    } catch (error) {
-      toast.error("Failed to save credential.");
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleSubmit = (values: FormValues) => {
+    // Convert values to proper types
+    const credentialData: Partial<Credential> = {
+      ...values,
+      environment: values.environment as EnvironmentType,
+      category: values.category as CategoryType,
+      // Only include applicationId if it's not empty
+      applicationId: values.applicationId && values.applicationId !== "" ? values.applicationId : undefined,
+      // Set creator for new credentials only
+      createdBy: credential ? undefined : "user-1", // Would come from auth context in real app
+    };
+
+    onSave(credentialData);
   };
+  
+  const applications = mockApplications;
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 py-4">
-        <BasicInfoFields form={form} />
-        
-        {!applicationMode && (
-          <ApplicationField form={form} applications={applications || []} />
-        )}
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <BasicInfoFields form={form} showPassword={showPassword} setShowPassword={setShowPassword} />
         
         <AccessFields form={form} />
+        
+        <ApplicationField form={form} applications={applications} />
+        
         <AdditionalFields form={form} />
-
-        <div className="flex justify-end space-x-4 pt-4">
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={onCancel}
-            className="rounded-md"
-          >
+        
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button 
-            type="submit" 
-            disabled={isSubmitting} 
-            className="rounded-md"
-          >
-            {isSubmitting ? "Saving..." : "Save"}
+          <Button type="submit">
+            {credential ? "Update Credential" : "Create Credential"}
           </Button>
         </div>
       </form>
     </Form>
   );
-}
+};
+
+export default CredentialForm;
