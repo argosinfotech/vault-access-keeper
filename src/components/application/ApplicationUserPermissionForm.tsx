@@ -3,20 +3,14 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { User, ApplicationPermission, CategoryType, CategoryPermission } from "@/types";
 import { grantApplicationPermission } from "@/api/applicationPermissionApi";
 import { toast } from "sonner";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import CategoryPermissionsSelector from "./CategoryPermissionsSelector";
+import MainPermissionSelector from "./MainPermissionSelector";
+import CategoryPermissionsAccordion from "./CategoryPermissionsAccordion";
 
 const formSchema = z.object({
   userId: z.string().min(1, "Please select a user"),
@@ -43,7 +37,7 @@ export default function ApplicationUserPermissionForm({
   onCancel 
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // Explicit CategoryPermission initialization
+
   const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
     category,
     permission: ApplicationPermission.VIEWER
@@ -83,34 +77,24 @@ export default function ApplicationUserPermissionForm({
   };
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
-    // Explicitly create properly typed CategoryPermission objects
-    const updatedPermissions: CategoryPermission[] = categoryPermissions.map(cp => 
-      cp.category === category ? { 
-        category, // Ensure this is non-optional
-        permission // Ensure this is non-optional
-      } : cp
+    const updatedPermissions: CategoryPermission[] = categoryPermissions.map(cp =>
+      cp.category === category
+        ? { category, permission }
+        : cp
     );
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
   };
 
-  // Set all category permissions to match the main permission
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
-    // Create an array of properly typed CategoryPermission objects
-    const updatedPermissions = Object.values(CategoryType).map(category => {
-      // Explicitly create each object with required properties
-      const catPermission: CategoryPermission = {
-        category: category,
-        permission: permission
-      };
-      return catPermission;
-    });
-    
+    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
+      category,
+      permission,
+    }));
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
   };
 
-  // Update all category permissions when the main permission changes
   const handleMainPermissionChange = (permission: ApplicationPermission) => {
     form.setValue("permission", permission);
     updateAllCategoryPermissions(permission);
@@ -127,6 +111,7 @@ export default function ApplicationUserPermissionForm({
               <FormLabel>User</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
+                value={field.value}
                 defaultValue={field.value}
                 disabled={users.length === 0}
               >
@@ -148,45 +133,16 @@ export default function ApplicationUserPermissionForm({
           )}
         />
 
-        <FormField
+        <MainPermissionSelector
           control={form.control}
-          name="permission"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Default Permission Level</FormLabel>
-              <Select 
-                onValueChange={(value) => handleMainPermissionChange(value as ApplicationPermission)} 
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select permission" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value={ApplicationPermission.ADMIN}>Admin (Full Access)</SelectItem>
-                  <SelectItem value={ApplicationPermission.VIEWER}>Viewer (Read Only)</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                This permission will be applied to all credential categories
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          value={form.watch("permission")}
+          onPermissionChange={handleMainPermissionChange}
         />
 
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="category-permissions">
-            <AccordionTrigger>Credential Category Permissions</AccordionTrigger>
-            <AccordionContent>
-              <CategoryPermissionsSelector
-                categoryPermissions={categoryPermissions}
-                onChange={handleCategoryPermissionChange}
-              />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <CategoryPermissionsAccordion
+          categoryPermissions={categoryPermissions}
+          onCategoryPermissionChange={handleCategoryPermissionChange}
+        />
 
         <div className="flex justify-end gap-2 pt-2">
           <Button 
