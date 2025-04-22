@@ -39,16 +39,13 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
 
   const getCategoryIcon = (category: CategoryType) => {
     switch (category) {
-      case CategoryType.APPLICATION:
+      case CategoryType.STAGING_APPLICATION:
+      case CategoryType.LIVE_APPLICATION:
+      case CategoryType.QA_APPLICATION:
         return "💻";
-      case CategoryType.DATABASE:
-        return "🗄️";
-      case CategoryType.HOSTING:
+      case CategoryType.STAGING_HOSTING:
+      case CategoryType.PRODUCTION_HOSTING:
         return "☁️";
-      case CategoryType.API:
-        return "🔌";
-      case CategoryType.EMAIL:
-        return "📧";
       default:
         return "🔑";
     }

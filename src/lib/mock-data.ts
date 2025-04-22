@@ -1,4 +1,3 @@
-
 import { User, UserRole, Application, Credential, AuditLog, EnvironmentType, CategoryType } from "@/types";
 
 // Mock current user (for development)
@@ -44,7 +43,6 @@ export const mockApplications = [
     id: "app-1",
     name: "Frontend Web App",
     description: "Main customer-facing web application",
-    category: CategoryType.APPLICATION,
     createdBy: "user-1",
     createdAt: new Date("2023-11-15T10:00:00"),
     updatedAt: new Date("2023-11-15T10:00:00")
@@ -53,7 +51,6 @@ export const mockApplications = [
     id: "app-2",
     name: "Admin Portal",
     description: "Internal admin management system",
-    category: CategoryType.APPLICATION,
     createdBy: "user-1",
     createdAt: new Date("2023-10-25T10:00:00"),
     updatedAt: new Date("2023-11-10T10:00:00")
@@ -62,7 +59,6 @@ export const mockApplications = [
     id: "app-3",
     name: "Customer Database",
     description: "Main database for customer records",
-    category: CategoryType.DATABASE,
     createdBy: "user-2",
     createdAt: new Date("2023-09-15T10:00:00"),
     updatedAt: new Date("2023-10-05T10:00:00")
@@ -78,7 +74,7 @@ export const mockCredentials = [
     password: "securePass123!",
     url: "https://app.example.com",
     environment: EnvironmentType.PRODUCTION,
-    category: CategoryType.APPLICATION,
+    category: CategoryType.LIVE_APPLICATION,
     applicationId: "app-1",
     notes: "Main production credentials",
     createdBy: "user-1",
@@ -94,7 +90,7 @@ export const mockCredentials = [
     password: "dev-password-456",
     url: "https://staging.example.com",
     environment: EnvironmentType.STAGING,
-    category: CategoryType.APPLICATION,
+    category: CategoryType.STAGING_APPLICATION,
     applicationId: "app-1",
     createdBy: "user-1",
     createdAt: new Date("2023-10-20T11:00:00"),
@@ -107,7 +103,7 @@ export const mockCredentials = [
     password: "admin-secret!",
     url: "https://admin.example.com",
     environment: EnvironmentType.PRODUCTION,
-    category: CategoryType.APPLICATION,
+    category: CategoryType.LIVE_APPLICATION,
     applicationId: "app-2",
     notes: "Admin access",
     createdBy: "user-2",
@@ -122,7 +118,7 @@ export const mockCredentials = [
     username: "readonly_user",
     password: "db-read-only",
     environment: EnvironmentType.PRODUCTION,
-    category: CategoryType.DATABASE,
+    category: CategoryType.PRODUCTION_HOSTING,
     applicationId: "app-3",
     notes: "Read-only access for reporting",
     createdBy: "user-2",
@@ -136,7 +132,7 @@ export const mockCredentials = [
     password: "smtp-password",
     url: "smtp.example.com",
     environment: EnvironmentType.PRODUCTION,
-    category: CategoryType.EMAIL,
+    category: CategoryType.OTHER,
     notes: "Credentials for sending emails",
     createdBy: "user-1",
     createdAt: new Date("2023-07-01T14:00:00"),
@@ -148,7 +144,7 @@ export const mockCredentials = [
     username: "api_payments",
     password: "payments-api-key",
     environment: EnvironmentType.PRODUCTION,
-    category: CategoryType.API,
+    category: CategoryType.OTHER,
     notes: "API key for processing payments",
     createdBy: "user-3",
     createdAt: new Date("2023-06-15T11:30:00"),

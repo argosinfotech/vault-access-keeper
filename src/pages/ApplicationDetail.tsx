@@ -126,7 +126,7 @@ const ApplicationDetail = () => {
                 onCancel={handleCloseDrawer}
                 defaultValues={{ 
                   environment: EnvironmentType.DEVELOPMENT, 
-                  category: CategoryType.APPLICATION, 
+                  category: CategoryType.STAGING_APPLICATION, 
                   applicationId: applicationId,
                   title: applicationName
                 }}
