@@ -16,7 +16,6 @@ export async function getApplications(): Promise<Application[]> {
     createdBy: app.created_by,
     createdAt: new Date(app.created_at),
     updatedAt: new Date(app.updated_at),
-    // category removed
   }));
 }
 
@@ -35,7 +34,6 @@ export async function getApplicationById(id: string): Promise<Application> {
     createdBy: data.created_by,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
-    // category removed
   };
 }
 
@@ -45,7 +43,6 @@ export async function addApplication(newApp: Omit<Application, "id" | "createdAt
     .from("applications")
     .insert([{
       ...newApp
-      // no category
     }])
     .select()
     .single();
@@ -57,7 +54,6 @@ export async function addApplication(newApp: Omit<Application, "id" | "createdAt
     createdBy: data.created_by,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
-    // category removed
   };
 }
 
@@ -67,7 +63,6 @@ export async function updateApplication(id: string, changes: Partial<Application
     .from("applications")
     .update({
       ...changes
-      // no category
     })
     .eq("id", id)
     .select()
@@ -80,14 +75,13 @@ export async function updateApplication(id: string, changes: Partial<Application
     createdBy: data.created_by,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
-    // category removed
   };
 }
 
 // Delete an application
 export async function deleteApplication(id: string): Promise<void> {
-  const { error } = await supabase.from("applications").delete().eq("id", id);
-  if (error) throw error;
+  const result = await supabase.from("applications").delete().eq("id", id);
+  if (result.error) throw result.error;
 }
 
 // Get credentials for an application (across environments)

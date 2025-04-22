@@ -14,37 +14,34 @@ const createMockClient = () => {
     return Promise.resolve({ data, error });
   };
   
+  // Create a consistent response object that always has data and error properties
+  const ensureConsistentResponse = (obj: any) => {
+    // Add a then method that always returns a properly structured response
+    const original = obj;
+    obj.then = (resolve: any) => resolve({ data: [], error: null });
+    return obj;
+  };
+
   // Helper function to create consistent mock method chains
   const createMockChain = () => {
-    const methods = {
-      single: () => createMockResponse({ id: "mock-id" }),
-      eq: () => methods,
-      neq: () => methods,
-      lt: () => methods,
-      lte: () => methods,
-      gt: () => methods,
-      gte: () => methods,
-      like: () => methods,
-      ilike: () => methods,
-      in: () => methods,
-      contains: () => methods,
-      containedBy: () => methods,
-      rangeLt: () => methods,
-      rangeGt: () => methods,
-      rangeGte: () => methods,
-      rangeLte: () => methods,
-      textSearch: () => methods,
-      match: () => methods,
-      not: () => methods,
-      filter: () => methods,
-      or: () => methods,
-      select: () => methods,
-      order: () => createMockResponse([]),
-      limit: () => methods,
-      range: () => methods,
-      maybeSingle: () => createMockResponse({ id: "mock-id" }),
+    const chain: any = {
+      data: [],
+      error: null,
+      then: (callback: any) => callback({ data: [], error: null }),
     };
-    return methods;
+    
+    const methods = [
+      'single', 'eq', 'neq', 'lt', 'lte', 'gt', 'gte', 'like', 'ilike', 'in',
+      'contains', 'containedBy', 'rangeLt', 'rangeGt', 'rangeGte', 'rangeLte',
+      'textSearch', 'match', 'not', 'filter', 'or', 'select', 'order', 'limit',
+      'range', 'maybeSingle'
+    ];
+    
+    methods.forEach(method => {
+      chain[method] = () => chain;
+    });
+    
+    return chain;
   };
 
   return {
@@ -53,10 +50,14 @@ const createMockClient = () => {
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
     },
     from: (table: string) => {
-      const methods = {
-        select: () => createMockChain(),
+      const mockChain = createMockChain();
+      
+      return {
+        select: () => mockChain,
         insert: (values: any) => ({
+          ...mockChain,
           select: () => ({
+            ...mockChain,
             single: () => createMockResponse({ 
               id: "mock-id", 
               user_id: "user-id", 
@@ -65,14 +66,16 @@ const createMockClient = () => {
               created_at: new Date().toISOString(), 
               updated_at: new Date().toISOString() 
             }),
-            maybeSingle: () => createMockResponse({ id: "mock-id" }),
           }),
-          ...createMockChain()
         }),
         update: (values: any) => ({
+          ...mockChain,
           eq: (column: string, value: any) => ({
+            ...mockChain,
             eq: (column2: string, value2: any) => ({
+              ...mockChain,
               select: () => ({
+                ...mockChain,
                 single: () => createMockResponse({ 
                   id: "mock-id", 
                   user_id: "user-id", 
@@ -83,23 +86,16 @@ const createMockClient = () => {
                 }),
               }),
             }),
-            select: () => ({
-              single: () => createMockResponse({ id: "mock-id" }),
-            }),
-            ...createMockChain()
           }),
-          ...createMockChain()
         }),
         delete: () => ({
+          ...mockChain,
           eq: (column: string, value: any) => ({
+            ...mockChain,
             eq: (column2: string, value2: any) => createMockResponse(),
-            ...createMockChain()
           }),
-          ...createMockChain()
         }),
-        ...createMockChain()
       };
-      return methods;
     },
     functions: {
       invoke: (name: string, options: any) => {

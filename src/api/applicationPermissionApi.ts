@@ -4,7 +4,7 @@ import { UserApplicationPermission, ApplicationPermission } from "@/types";
 
 // Get all users with permissions for a specific application
 export async function getUsersWithPermissions(applicationId: string): Promise<UserApplicationPermission[]> {
-  const response = await supabase
+  const result = await supabase
     .from("user_application_permissions")
     .select(`
       id,
@@ -17,9 +17,13 @@ export async function getUsersWithPermissions(applicationId: string): Promise<Us
     `)
     .eq("application_id", applicationId);
 
-  if (response.error) throw response.error;
+  // Access the response properties safely
+  const data = result?.data ?? [];
+  const error = result?.error;
   
-  return (response.data ?? []).map((p: any) => ({
+  if (error) throw error;
+  
+  return data.map((p: any) => ({
     id: p.id,
     userId: p.user_id,
     applicationId: p.application_id,
@@ -33,7 +37,7 @@ export async function getUsersWithPermissions(applicationId: string): Promise<Us
 
 // Get applications a user has access to
 export async function getUserApplications(userId: string): Promise<UserApplicationPermission[]> {
-  const response = await supabase
+  const result = await supabase
     .from("user_application_permissions")
     .select(`
       id,
@@ -46,9 +50,13 @@ export async function getUserApplications(userId: string): Promise<UserApplicati
     `)
     .eq("user_id", userId);
 
-  if (response.error) throw response.error;
+  // Access the response properties safely
+  const data = result?.data ?? [];
+  const error = result?.error;
   
-  return (response.data ?? []).map((p: any) => ({
+  if (error) throw error;
+  
+  return data.map((p: any) => ({
     id: p.id,
     userId: p.user_id,
     applicationId: p.application_id,
@@ -76,16 +84,19 @@ export async function grantApplicationPermission(
   };
 
   // First try to update existing record
-  const existingResponse = await supabase
+  const existingResult = await supabase
     .from("user_application_permissions")
     .select()
     .eq("user_id", userId)
     .eq("application_id", applicationId);
-
-  let response;
-  if (existingResponse.data && existingResponse.data.length > 0) {
+  
+  // Handle data and error safely
+  const existingData = existingResult?.data ?? [];
+  
+  let result;
+  if (existingData && existingData.length > 0) {
     // Update existing record
-    response = await supabase
+    result = await supabase
       .from("user_application_permissions")
       .update(recordData)
       .eq("user_id", userId)
@@ -94,22 +105,26 @@ export async function grantApplicationPermission(
       .single();
   } else {
     // Insert new record
-    response = await supabase
+    result = await supabase
       .from("user_application_permissions")
       .insert(recordData)
       .select()
       .single();
   }
+  
+  // Handle data and error safely
+  const data = result?.data;
+  const error = result?.error;
 
-  if (response.error) throw response.error;
+  if (error) throw error;
   
   return {
-    id: response.data.id,
-    userId: response.data.user_id,
-    applicationId: response.data.application_id,
-    permission: response.data.permission as ApplicationPermission,
-    createdAt: new Date(response.data.created_at),
-    updatedAt: new Date(response.data.updated_at),
+    id: data.id,
+    userId: data.user_id,
+    applicationId: data.application_id,
+    permission: data.permission as ApplicationPermission,
+    createdAt: new Date(data.created_at),
+    updatedAt: new Date(data.updated_at),
     userName: undefined,
     userEmail: undefined,
   };
@@ -120,11 +135,13 @@ export async function removeApplicationPermission(
   userId: string, 
   applicationId: string
 ): Promise<void> {
-  const response = await supabase
+  const result = await supabase
     .from("user_application_permissions")
     .delete()
     .eq("user_id", userId)
     .eq("application_id", applicationId);
 
-  if (response.error) throw response.error;
+  // Handle error safely  
+  const error = result?.error;
+  if (error) throw error;
 }

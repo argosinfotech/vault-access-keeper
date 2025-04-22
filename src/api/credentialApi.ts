@@ -114,6 +114,6 @@ export async function updateCredential(id: string, changes: Partial<Credential>)
 
 // Delete credential (admin/manager)
 export async function deleteCredential(id: string): Promise<void> {
-  const { error } = await supabase.from("credentials").delete().eq("id", id);
-  if (error) throw error;
+  const result = await supabase.from("credentials").delete().eq("id", id);
+  if (result.error) throw result.error;
 }

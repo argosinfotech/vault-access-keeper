@@ -39,8 +39,10 @@ export interface UserApplicationPermission {
   permission: ApplicationPermission;
   createdAt: Date;
   updatedAt?: Date;
+  // Properties for UI display - populated when joining with users table
   userName?: string;
   userEmail?: string;
+  // Properties for UI display - populated when joining with applications table
   applicationName?: string;
   applicationDescription?: string;
 }

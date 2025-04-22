@@ -94,6 +94,6 @@ export async function updateUser(id: string, changes: Partial<Pick<User, "name" 
 
 // Delete user (admin/manager)
 export async function deleteUser(id: string): Promise<void> {
-  const { error } = await supabase.from("users").delete().eq("id", id);
-  if (error) throw error;
+  const result = await supabase.from("users").delete().eq("id", id);
+  if (result.error) throw result.error;
 }
