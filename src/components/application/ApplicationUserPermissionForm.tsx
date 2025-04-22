@@ -3,14 +3,14 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 import { User, ApplicationPermission, CategoryType, CategoryPermission } from "@/types";
 import { grantApplicationPermission } from "@/api/applicationPermissionApi";
 import { toast } from "sonner";
 import MainPermissionSelector from "./MainPermissionSelector";
 import CategoryPermissionsAccordion from "./CategoryPermissionsAccordion";
+import UserSelectField from "./UserSelectField";
+import FormActionButtons from "./FormActionButtons";
 
 const formSchema = z.object({
   userId: z.string().min(1, "Please select a user"),
@@ -30,11 +30,11 @@ interface ApplicationUserPermissionFormProps {
   onCancel: () => void;
 }
 
-export default function ApplicationUserPermissionForm({ 
-  applicationId, 
-  users, 
-  onSave, 
-  onCancel 
+export default function ApplicationUserPermissionForm({
+  applicationId,
+  users,
+  onSave,
+  onCancel
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -89,7 +89,7 @@ export default function ApplicationUserPermissionForm({
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
     const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
       category,
-      permission,
+      permission
     }));
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
@@ -103,35 +103,7 @@ export default function ApplicationUserPermissionForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="userId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>User</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
-                value={field.value}
-                defaultValue={field.value}
-                disabled={users.length === 0}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select user" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      {user.name} ({user.email})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <UserSelectField control={form.control} users={users} />
 
         <MainPermissionSelector
           control={form.control}
@@ -144,22 +116,7 @@ export default function ApplicationUserPermissionForm({
           onCategoryPermissionChange={handleCategoryPermissionChange}
         />
 
-        <div className="flex justify-end gap-2 pt-2">
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={onCancel}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button 
-            type="submit" 
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Saving..." : "Grant Access"}
-          </Button>
-        </div>
+        <FormActionButtons onCancel={onCancel} isSubmitting={isSubmitting} />
       </form>
     </Form>
   );
