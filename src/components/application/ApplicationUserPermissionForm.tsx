@@ -38,10 +38,12 @@ export default function ApplicationUserPermissionForm({
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
-    category,
+  // Create initial category permissions with explicit type declaration
+  const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map((category): CategoryPermission => ({
+    category: category,
     permission: ApplicationPermission.VIEWER
   }));
+  
   const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(initialCategoryPermissions);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -77,21 +79,26 @@ export default function ApplicationUserPermissionForm({
   };
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
-    const updatedPermissions: CategoryPermission[] = categoryPermissions.map(cp =>
-      cp.category === category
-        ? { category, permission } // Ensure both properties are non-optional
-        : cp
-    );
+    const updatedPermissions: CategoryPermission[] = categoryPermissions.map((cp): CategoryPermission => {
+      if (cp.category === category) {
+        return {
+          category: category, // Explicitly define as required
+          permission: permission // Explicitly define as required
+        };
+      }
+      return cp;
+    });
+    
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
   };
 
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
-    // Ensure all CategoryPermission objects have non-optional category and permission
-    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
-      category,
-      permission
+    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map((category): CategoryPermission => ({
+      category: category, // Explicitly define as required
+      permission: permission // Explicitly define as required
     }));
+    
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
   };
