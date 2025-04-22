@@ -31,12 +31,19 @@ export enum ApplicationPermission {
   VIEWER = "viewer",   // Can only view app and its credentials
 }
 
+// Category permission level
+export interface CategoryPermission {
+  category: CategoryType;
+  permission: ApplicationPermission;
+}
+
 // User application permission
 export interface UserApplicationPermission {
   id: string;
   userId: string;
   applicationId: string;
   permission: ApplicationPermission;
+  categoryPermissions: CategoryPermission[]; // Added category-specific permissions
   createdAt: Date;
   updatedAt?: Date;
   // Properties for UI display - populated when joining with users table

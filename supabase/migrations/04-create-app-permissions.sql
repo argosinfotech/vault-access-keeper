@@ -5,6 +5,7 @@ create table if not exists public.user_application_permissions (
   user_id uuid not null references users(id) on delete cascade,
   application_id uuid not null references applications(id) on delete cascade,
   permission text not null check (permission in ('admin', 'viewer')),
+  category_permissions jsonb not null default '[]'::jsonb, -- Store category permissions as JSON array
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   -- Ensure each user can only have one permission entry per application

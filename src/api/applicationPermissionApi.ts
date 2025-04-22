@@ -1,6 +1,6 @@
 
 import { supabase } from "@/lib/supabaseClient";
-import { UserApplicationPermission, ApplicationPermission } from "@/types";
+import { UserApplicationPermission, ApplicationPermission, CategoryPermission, CategoryType } from "@/types";
 
 // Get all users with permissions for a specific application
 export async function getUsersWithPermissions(applicationId: string): Promise<UserApplicationPermission[]> {
@@ -11,6 +11,7 @@ export async function getUsersWithPermissions(applicationId: string): Promise<Us
       user_id,
       application_id,
       permission,
+      category_permissions,
       created_at,
       updated_at,
       users:user_id (name, email)
@@ -28,10 +29,23 @@ export async function getUsersWithPermissions(applicationId: string): Promise<Us
     userId: p.user_id,
     applicationId: p.application_id,
     permission: p.permission as ApplicationPermission,
+    categoryPermissions: parseCategoryPermissions(p.category_permissions),
     createdAt: new Date(p.created_at),
     updatedAt: p.updated_at ? new Date(p.updated_at) : undefined,
     userName: p.users?.name,
     userEmail: p.users?.email,
+  }));
+}
+
+// Parse category permissions from JSON
+function parseCategoryPermissions(categoryPermissions: any): CategoryPermission[] {
+  if (!categoryPermissions || !Array.isArray(categoryPermissions)) {
+    return [];
+  }
+  
+  return categoryPermissions.map((cp: any) => ({
+    category: cp.category as CategoryType,
+    permission: cp.permission as ApplicationPermission,
   }));
 }
 
@@ -44,6 +58,7 @@ export async function getUserApplications(userId: string): Promise<UserApplicati
       user_id,
       application_id,
       permission,
+      category_permissions,
       created_at,
       updated_at,
       applications:application_id (name, description)
@@ -61,6 +76,7 @@ export async function getUserApplications(userId: string): Promise<UserApplicati
     userId: p.user_id,
     applicationId: p.application_id,
     permission: p.permission as ApplicationPermission,
+    categoryPermissions: parseCategoryPermissions(p.category_permissions),
     createdAt: new Date(p.created_at),
     updatedAt: p.updated_at ? new Date(p.updated_at) : undefined,
     applicationName: p.applications?.name,
@@ -68,11 +84,12 @@ export async function getUserApplications(userId: string): Promise<UserApplicati
   }));
 }
 
-// Grant permission to a user for an application
+// Grant permission to a user for an application with category permissions
 export async function grantApplicationPermission(
   userId: string, 
   applicationId: string, 
-  permission: ApplicationPermission
+  permission: ApplicationPermission,
+  categoryPermissions: CategoryPermission[]
 ): Promise<UserApplicationPermission> {
   // In real implementation, Supabase supports upsert
   // In mock implementation, we need to handle it differently
@@ -80,6 +97,7 @@ export async function grantApplicationPermission(
     user_id: userId,
     application_id: applicationId,
     permission,
+    category_permissions: categoryPermissions,
     updated_at: new Date().toISOString()
   };
 
@@ -123,6 +141,7 @@ export async function grantApplicationPermission(
     userId: data.user_id,
     applicationId: data.application_id,
     permission: data.permission as ApplicationPermission,
+    categoryPermissions: parseCategoryPermissions(data.category_permissions),
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
     userName: undefined,

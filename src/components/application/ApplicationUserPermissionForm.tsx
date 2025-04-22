@@ -3,7 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -12,13 +12,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { User, ApplicationPermission } from "@/types";
+import { User, ApplicationPermission, CategoryType, CategoryPermission } from "@/types";
 import { grantApplicationPermission } from "@/api/applicationPermissionApi";
 import { toast } from "sonner";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { PlusCircle, Trash } from "lucide-react";
 
 const formSchema = z.object({
   userId: z.string().min(1, "Please select a user"),
-  permission: z.nativeEnum(ApplicationPermission)
+  permission: z.nativeEnum(ApplicationPermission),
+  categoryPermissions: z.array(
+    z.object({
+      category: z.nativeEnum(CategoryType),
+      permission: z.nativeEnum(ApplicationPermission)
+    })
+  )
 });
 
 interface ApplicationUserPermissionFormProps {
@@ -35,12 +43,19 @@ export default function ApplicationUserPermissionForm({
   onCancel 
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(
+    Object.values(CategoryType).map(category => ({
+      category,
+      permission: ApplicationPermission.VIEWER
+    }))
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       userId: "",
-      permission: ApplicationPermission.VIEWER
+      permission: ApplicationPermission.VIEWER,
+      categoryPermissions
     }
   });
 
@@ -55,7 +70,8 @@ export default function ApplicationUserPermissionForm({
       await grantApplicationPermission(
         values.userId,
         applicationId,
-        values.permission
+        values.permission,
+        values.categoryPermissions
       );
       toast.success("User access granted successfully");
       onSave();
@@ -65,6 +81,30 @@ export default function ApplicationUserPermissionForm({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
+    const updatedPermissions = categoryPermissions.map(cp => 
+      cp.category === category ? { ...cp, permission } : cp
+    );
+    setCategoryPermissions(updatedPermissions);
+    form.setValue("categoryPermissions", updatedPermissions);
+  };
+
+  // Set all category permissions to match the main permission
+  const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
+    const updatedPermissions = categoryPermissions.map(cp => ({
+      ...cp,
+      permission
+    }));
+    setCategoryPermissions(updatedPermissions);
+    form.setValue("categoryPermissions", updatedPermissions);
+  };
+
+  // Update all category permissions when the main permission changes
+  const handleMainPermissionChange = (permission: ApplicationPermission) => {
+    form.setValue("permission", permission);
+    updateAllCategoryPermissions(permission);
   };
 
   return (
@@ -104,8 +144,11 @@ export default function ApplicationUserPermissionForm({
           name="permission"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Permission Level</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormLabel>Default Permission Level</FormLabel>
+              <Select 
+                onValueChange={(value) => handleMainPermissionChange(value as ApplicationPermission)} 
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select permission" />
@@ -116,10 +159,49 @@ export default function ApplicationUserPermissionForm({
                   <SelectItem value={ApplicationPermission.VIEWER}>Viewer (Read Only)</SelectItem>
                 </SelectContent>
               </Select>
+              <FormDescription>
+                This permission will be applied to all credential categories
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="category-permissions">
+            <AccordionTrigger>Credential Category Permissions</AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-4">
+                <FormDescription>
+                  Set specific permissions for each credential category
+                </FormDescription>
+
+                {categoryPermissions.map((cp, index) => (
+                  <div key={cp.category} className="flex items-center space-x-2">
+                    <div className="flex-grow">
+                      <FormLabel className="text-sm font-medium">{cp.category}</FormLabel>
+                      <Select
+                        value={cp.permission}
+                        onValueChange={(value) => handleCategoryPermissionChange(
+                          cp.category, 
+                          value as ApplicationPermission
+                        )}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={ApplicationPermission.ADMIN}>Admin</SelectItem>
+                          <SelectItem value={ApplicationPermission.VIEWER}>Viewer</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         <div className="flex justify-end gap-2 pt-2">
           <Button 
