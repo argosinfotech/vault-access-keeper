@@ -79,7 +79,7 @@ export default function ApplicationUserPermissionForm({
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
     const updatedPermissions: CategoryPermission[] = categoryPermissions.map(cp =>
       cp.category === category
-        ? { category, permission }
+        ? { category, permission } // Ensure both properties are non-optional
         : cp
     );
     setCategoryPermissions(updatedPermissions);
@@ -87,6 +87,7 @@ export default function ApplicationUserPermissionForm({
   };
 
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
+    // Ensure all CategoryPermission objects have non-optional category and permission
     const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
       category,
       permission
