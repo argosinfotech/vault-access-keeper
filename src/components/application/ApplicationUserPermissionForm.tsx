@@ -55,6 +55,7 @@ export default function ApplicationUserPermissionForm({
     defaultValues: {
       userId: "",
       permission: ApplicationPermission.VIEWER,
+      // Explicitly type categoryPermissions to match the CategoryPermission interface
       categoryPermissions: initialCategoryPermissions
     }
   });
