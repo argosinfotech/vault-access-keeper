@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Credential, EnvironmentType, CategoryType } from "@/types";
@@ -51,84 +50,82 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
   };
 
   return (
-    <Card className="group hover:shadow-md transition-shadow duration-200">
-      <CardHeader className="p-4 pb-2">
-        <div className="flex justify-between items-start gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xl flex-shrink-0">{getCategoryIcon(credential.category)}</span>
-            <h3 className="font-medium text-sm truncate">{credential.title}</h3>
-          </div>
-          <Badge className={`${getEnvironmentColor(credential.environment)} text-xs`}>
-            {credential.environment}
-          </Badge>
+    <div className="group p-4 hover:bg-muted/50 rounded-lg transition-colors">
+      <div className="flex items-center justify-between gap-4 mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xl flex-shrink-0">{getCategoryIcon(credential.category)}</span>
+          <h3 className="font-medium truncate">{credential.title}</h3>
         </div>
-      </CardHeader>
+        <Badge className={`${getEnvironmentColor(credential.environment)} text-xs`}>
+          {credential.environment}
+        </Badge>
+      </div>
       
-      <CardContent className="p-4 pt-2 space-y-2">
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between gap-2 text-sm">
-            <span className="text-muted-foreground">Username</span>
-            <div className="flex items-center gap-1">
-              <span className="font-mono text-xs truncate max-w-[120px]">{credential.username}</span>
-              <Button 
-                size="icon" 
-                variant="ghost" 
-                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => copyToClipboard(credential.username, "Username")}
-              >
-                <Copy className="h-3 w-3" />
-              </Button>
-            </div>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm text-muted-foreground">Username</span>
+          <div className="flex items-center gap-1">
+            <code className="text-xs bg-muted px-1 py-0.5 rounded">{credential.username}</code>
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => copyToClipboard(credential.username, "Username")}
+            >
+              <Copy className="h-3 w-3" />
+            </Button>
           </div>
+        </div>
 
-          <div className="flex items-center justify-between gap-2 text-sm">
-            <span className="text-muted-foreground">Password</span>
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm text-muted-foreground">Password</span>
+          <div className="flex items-center gap-1">
+            <code className="text-xs bg-muted px-1 py-0.5 rounded">
+              {showPassword ? credential.password : '••••••••'}
+            </code>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => copyToClipboard(credential.password, "Password")}
+            >
+              <Copy className="h-3 w-3" />
+            </Button>
+          </div>
+        </div>
+
+        {credential.url && (
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm text-muted-foreground">URL</span>
             <div className="flex items-center gap-1">
-              <span className="font-mono text-xs truncate max-w-[120px]">
-                {showPassword ? credential.password : '••••••••'}
-              </span>
+              <code className="text-xs bg-muted px-1 py-0.5 rounded truncate max-w-[200px]">
+                {credential.url}
+              </code>
               <Button
                 size="icon"
                 variant="ghost"
                 className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => window.open(credential.url, "_blank")}
               >
-                {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => copyToClipboard(credential.password, "Password")}
-              >
-                <Copy className="h-3 w-3" />
+                <ExternalLink className="h-3 w-3" />
               </Button>
             </div>
           </div>
+        )}
+      </div>
 
-          {credential.url && (
-            <div className="flex items-center justify-between gap-2 text-sm">
-              <span className="text-muted-foreground">URL</span>
-              <div className="flex items-center gap-1">
-                <span className="font-mono text-xs truncate max-w-[120px]">{credential.url}</span>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => window.open(credential.url, "_blank")}
-                >
-                  <ExternalLink className="h-3 w-3" />
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="pt-2 text-[10px] text-muted-foreground border-t">
-          Updated {formatDistanceToNow(credential.updatedAt)} ago
-        </div>
-      </CardContent>
-    </Card>
+      <div className="mt-3 pt-2 text-[10px] text-muted-foreground border-t border-border">
+        Updated {formatDistanceToNow(credential.updatedAt)} ago
+      </div>
+    </div>
   );
 };
 

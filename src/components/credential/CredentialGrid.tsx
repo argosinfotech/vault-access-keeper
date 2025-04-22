@@ -92,7 +92,7 @@ const CredentialGrid = ({ credentials }: CredentialGridProps) => {
           </div>
           
           <TabsContent value={activeTab} className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+            <div className="divide-y divide-border rounded-lg border bg-background">
               {filteredCredentials.map(credential => (
                 <CredentialCard key={credential.id} credential={credential} />
               ))}
