@@ -12,6 +12,7 @@ import CategoryPermissionsAccordion from "./CategoryPermissionsAccordion";
 import UserSelectField from "./UserSelectField";
 import FormActionButtons from "./FormActionButtons";
 
+// Update the form schema to ensure CategoryPermission properties are required
 const formSchema = z.object({
   userId: z.string().min(1, "Please select a user"),
   permission: z.nativeEnum(ApplicationPermission),
@@ -22,6 +23,8 @@ const formSchema = z.object({
     })
   )
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 interface ApplicationUserPermissionFormProps {
   applicationId: string;
@@ -38,15 +41,18 @@ export default function ApplicationUserPermissionForm({
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Create initial category permissions with explicit type declaration
-  const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map((category): CategoryPermission => ({
-    category: category,
-    permission: ApplicationPermission.VIEWER
-  }));
+  // Create properly typed initial category permissions
+  const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => {
+    const categoryPermission: CategoryPermission = {
+      category: category,
+      permission: ApplicationPermission.VIEWER
+    };
+    return categoryPermission;
+  });
   
   const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(initialCategoryPermissions);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       userId: "",
@@ -55,7 +61,7 @@ export default function ApplicationUserPermissionForm({
     }
   });
 
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (values: FormValues) => {
     if (users.length === 0) {
       toast.error("No users available to grant permissions to");
       return;
@@ -79,12 +85,13 @@ export default function ApplicationUserPermissionForm({
   };
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
-    const updatedPermissions: CategoryPermission[] = categoryPermissions.map((cp): CategoryPermission => {
+    const updatedPermissions: CategoryPermission[] = categoryPermissions.map((cp) => {
       if (cp.category === category) {
-        return {
-          category: category, // Explicitly define as required
-          permission: permission // Explicitly define as required
+        const newCategoryPerm: CategoryPermission = {
+          category: category,
+          permission: permission
         };
+        return newCategoryPerm;
       }
       return cp;
     });
@@ -94,10 +101,13 @@ export default function ApplicationUserPermissionForm({
   };
 
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
-    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map((category): CategoryPermission => ({
-      category: category, // Explicitly define as required
-      permission: permission // Explicitly define as required
-    }));
+    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => {
+      const categoryPerm: CategoryPermission = {
+        category: category,
+        permission: permission
+      };
+      return categoryPerm;
+    });
     
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
