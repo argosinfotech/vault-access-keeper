@@ -84,7 +84,7 @@ export default function ApplicationUserPermissionForm({
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
     const updatedPermissions = categoryPermissions.map(cp => 
-      cp.category === category ? { category, permission } : cp
+      cp.category === category ? { category, permission } as CategoryPermission : cp
     );
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
@@ -92,7 +92,7 @@ export default function ApplicationUserPermissionForm({
 
   // Set all category permissions to match the main permission
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
-    const updatedPermissions = Object.values(CategoryType).map(category => ({
+    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
       category,
       permission
     }));
