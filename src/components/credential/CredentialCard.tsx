@@ -6,6 +6,9 @@ import { Credential, EnvironmentType, CategoryType } from "@/types";
 import { Eye, EyeOff, Copy, ExternalLink } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { getApplicationById } from "@/api/applicationApi";
+import { useNavigate } from "react-router-dom";
 
 interface CredentialCardProps {
   credential: Credential;
@@ -13,6 +16,13 @@ interface CredentialCardProps {
 
 const CredentialCard = ({ credential }: CredentialCardProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const { data: application } = useQuery({
+    queryKey: ['application', credential.applicationId],
+    queryFn: () => getApplicationById(credential.applicationId || ''),
+    enabled: !!credential.applicationId
+  });
 
   const getEnvironmentColor = (env: EnvironmentType) => {
     switch (env) {
@@ -60,6 +70,19 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
           {credential.environment}
         </Badge>
       </div>
+      
+      {application && (
+        <div className="mb-3">
+          <Button 
+            variant="link" 
+            size="sm" 
+            className="p-0 h-auto text-xs"
+            onClick={() => navigate(`/applications/${application.id}`)}
+          >
+            Part of {application.name}
+          </Button>
+        </div>
+      )}
       
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">

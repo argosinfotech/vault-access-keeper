@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Credentials from "./pages/Credentials";
+import Applications from "./pages/Applications";
+import ApplicationDetail from "./pages/ApplicationDetail";
 import Users from "./pages/Users";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
@@ -24,6 +27,8 @@ const App = () => (
           <Route element={<MainLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/credentials" element={<Credentials />} />
+            <Route path="/applications" element={<Applications />} />
+            <Route path="/applications/:id" element={<ApplicationDetail />} />
             <Route path="/users" element={<Users />} />
             <Route path="/settings" element={<Settings />} />
           </Route>

@@ -35,6 +35,17 @@ export interface User {
   lastLogin?: Date;
 }
 
+// Application type for master list
+export interface Application {
+  id: string;
+  name: string;
+  description?: string;
+  category: CategoryType;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Credential type
 export interface Credential {
   id: string;
@@ -44,6 +55,7 @@ export interface Credential {
   url?: string;
   environment: EnvironmentType;
   category: CategoryType;
+  applicationId?: string;  // Link to master application
   notes?: string;
   createdBy: string;
   createdAt: Date;

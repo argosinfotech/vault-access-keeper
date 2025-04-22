@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import CredentialGrid from "@/components/credential/CredentialGrid";
 import { Button } from "@/components/ui/button";
@@ -12,26 +13,27 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import CredentialForm from "@/components/credential/CredentialForm";
-import { mockCredentials } from "@/lib/mock-data";
+import { getCredentials } from "@/api/credentialApi";
 import { toast } from "sonner";
 
 const Credentials = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [credentials, setCredentials] = useState([...mockCredentials]);
+  
+  const { data: credentials, isLoading, error, refetch } = useQuery({
+    queryKey: ['credentials'],
+    queryFn: getCredentials
+  });
 
-  const handleAddCredential = (data) => {
-    // In a real application, you would make an API call to save the credential
-    const newCredential = {
-      id: `cred-${Date.now()}`,
-      ...data,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    setCredentials([newCredential, ...credentials]);
+  const handleAddCredential = async (data: any) => {
+    await refetch();
     setIsSheetOpen(false);
     toast.success("Credential added successfully");
   };
+
+  if (error) {
+    console.error(error);
+    toast.error("Failed to load credentials");
+  }
 
   return (
     <div className="flex-1">
@@ -60,7 +62,7 @@ const Credentials = () => {
           </div>
         </div>
         
-        <CredentialGrid credentials={credentials} />
+        <CredentialGrid credentials={credentials || []} isLoading={isLoading} />
       </div>
       
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>

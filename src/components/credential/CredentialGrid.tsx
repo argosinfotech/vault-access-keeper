@@ -16,9 +16,10 @@ import { Button } from "@/components/ui/button";
 
 interface CredentialGridProps {
   credentials: Credential[];
+  isLoading?: boolean;
 }
 
-const CredentialGrid = ({ credentials }: CredentialGridProps) => {
+const CredentialGrid = ({ credentials, isLoading }: CredentialGridProps) => {
   const [activeTab, setActiveTab] = useState<EnvironmentType | "all">("all");
   const [selectedCategories, setSelectedCategories] = useState<CategoryType[]>([]);
 
@@ -48,6 +49,17 @@ const CredentialGrid = ({ credentials }: CredentialGridProps) => {
       return [...prev, category];
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Layout className="h-12 w-12 mx-auto mb-4 animate-pulse text-muted-foreground" />
+          <p>Loading credentials...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
