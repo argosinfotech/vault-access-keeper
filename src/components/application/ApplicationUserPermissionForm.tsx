@@ -16,7 +16,7 @@ import { User, ApplicationPermission, CategoryType, CategoryPermission } from "@
 import { grantApplicationPermission } from "@/api/applicationPermissionApi";
 import { toast } from "sonner";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { PlusCircle, Trash } from "lucide-react";
+import CategoryPermissionsSelector from "./CategoryPermissionsSelector";
 
 const formSchema = z.object({
   userId: z.string().min(1, "Please select a user"),
@@ -43,24 +43,19 @@ export default function ApplicationUserPermissionForm({
   onCancel 
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // Initialize with all category types and default permission
-  const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(
-    Object.values(CategoryType).map(category => ({
-      category,
-      permission: ApplicationPermission.VIEWER
-    }))
-  );
+  // Explicit CategoryPermission initialization
+  const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
+    category,
+    permission: ApplicationPermission.VIEWER
+  }));
+  const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(initialCategoryPermissions);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       userId: "",
       permission: ApplicationPermission.VIEWER,
-      // Explicitly define category and permission as non-optional by creating proper CategoryPermission objects
-      categoryPermissions: Object.values(CategoryType).map(category => ({
-        category: category,
-        permission: ApplicationPermission.VIEWER
-      })) as CategoryPermission[]
+      categoryPermissions: initialCategoryPermissions
     }
   });
 
@@ -69,7 +64,6 @@ export default function ApplicationUserPermissionForm({
       toast.error("No users available to grant permissions to");
       return;
     }
-
     setIsSubmitting(true);
     try {
       await grantApplicationPermission(
@@ -176,34 +170,10 @@ export default function ApplicationUserPermissionForm({
           <AccordionItem value="category-permissions">
             <AccordionTrigger>Credential Category Permissions</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-4">
-                <FormDescription>
-                  Set specific permissions for each credential category
-                </FormDescription>
-
-                {categoryPermissions.map((cp, index) => (
-                  <div key={cp.category} className="flex items-center space-x-2">
-                    <div className="flex-grow">
-                      <FormLabel className="text-sm font-medium">{cp.category}</FormLabel>
-                      <Select
-                        value={cp.permission}
-                        onValueChange={(value) => handleCategoryPermissionChange(
-                          cp.category, 
-                          value as ApplicationPermission
-                        )}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value={ApplicationPermission.ADMIN}>Admin</SelectItem>
-                          <SelectItem value={ApplicationPermission.VIEWER}>Viewer</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CategoryPermissionsSelector
+                categoryPermissions={categoryPermissions}
+                onChange={handleCategoryPermissionChange}
+              />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
