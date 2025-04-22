@@ -1,83 +1,75 @@
-
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
-import CredentialGrid from "@/components/credential/CredentialGrid";
+import CredentialTable from "@/components/credential/CredentialTable";
 import { Button } from "@/components/ui/button";
-import { Plus, Filter } from "lucide-react";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import CredentialForm from "@/components/credential/CredentialForm";
-import { getCredentials } from "@/api/credentialApi";
-import { toast } from "sonner";
+import { Plus } from "lucide-react";
+import CredentialDrawer from "@/components/credential/CredentialDrawer";
+import { Credential } from "@/types";
 
 const Credentials = () => {
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  
-  const { data: credentials, isLoading, error, refetch } = useQuery({
-    queryKey: ['credentials'],
-    queryFn: getCredentials
-  });
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editCredential, setEditCredential] = useState<Credential | null>(null);
+  const [credentials, setCredentials] = useState<Credential[]>([]);
 
-  const handleAddCredential = async (data: any) => {
-    await refetch();
-    setIsSheetOpen(false);
-    toast.success("Credential added successfully");
+  const handleAddCredential = (newCredential: Partial<Credential>) => {
+    // Basic ID generation for demo purposes
+    const credentialToAdd: Credential = {
+      ...newCredential,
+      id: `credential-${Date.now()}`,
+      createdAt: new Date(),
+      title: newCredential.title || "Untitled",
+      username: newCredential.username || "Unknown",
+      password: newCredential.password || "N/A",
+      environment: newCredential.environment || "development",
+      category: newCredential.category || "application",
+    } as Credential;
+
+    setCredentials([...credentials, credentialToAdd]);
+    setDrawerOpen(false);
   };
 
-  if (error) {
-    console.error(error);
-    toast.error("Failed to load credentials");
-  }
+  const handleEditCredential = (credential: Credential) => {
+    setEditCredential(credential);
+    setDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setDrawerOpen(false);
+    setEditCredential(null);
+  };
+
+  const handleCredentialSave = (updatedCredential: Credential) => {
+    const updatedCredentials = credentials.map((credential) =>
+      credential.id === updatedCredential.id ? updatedCredential : credential
+    );
+    setCredentials(updatedCredentials);
+    setDrawerOpen(false);
+    setEditCredential(null);
+  };
 
   return (
     <div className="flex-1">
       <Header title="Credentials" />
-      
       <div className="px-8 py-6">
         <div className="flex justify-between mb-6">
           <h2 className="text-xl font-semibold">All Credentials</h2>
-          <div className="flex gap-2">
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="flex items-center gap-1 rounded-md"
-            >
-              <Filter className="h-4 w-4" />
-              <span>Filter</span>
-            </Button>
-            <Button 
-              size="sm" 
-              className="flex items-center gap-1 rounded-md"
-              onClick={() => setIsSheetOpen(true)}
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add New</span>
-            </Button>
-          </div>
+          <Button size="sm" className="flex items-center gap-1" onClick={() => setDrawerOpen(true)}>
+            <Plus className="h-4 w-4" />
+            <span>Add Credential</span>
+          </Button>
         </div>
-        
-        <CredentialGrid credentials={credentials || []} isLoading={isLoading} />
+        <CredentialTable
+          credentials={credentials}
+          onEdit={handleEditCredential}
+          onDelete={(id: string) => setCredentials(credentials.filter((c) => c.id !== id))}
+        />
       </div>
-      
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent side="right" className="max-w-md ml-auto w-full shadow-lg">
-          <SheetHeader>
-            <SheetTitle>Add New Credential</SheetTitle>
-          </SheetHeader>
-          <div className="px-4">
-            <CredentialForm 
-              onSubmit={handleAddCredential}
-              onCancel={() => setIsSheetOpen(false)}
-            />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <CredentialDrawer
+        open={drawerOpen}
+        credential={editCredential}
+        onClose={handleCloseDrawer}
+        onSave={handleCredentialSave}
+      />
     </div>
   );
 };

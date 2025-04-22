@@ -4,19 +4,27 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { mockUsers } from "@/lib/mock-data";
-import { UserDrawer } from "@/components/user/UserDrawer";
+import UserDrawer from "@/components/user/UserDrawer"; // Changed from named import to default import
 import { User, UserRole } from "@/types";
 import { MoreHorizontal, PenLine, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 
-const UserTable = () => {
+interface UserTableProps {
+  onEditUser?: (user: User) => void;
+}
+
+const UserTable = ({ onEditUser }: UserTableProps) => {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const handleEditUser = (user: User) => {
-    setEditingUser(user);
-    setIsDrawerOpen(true);
+    if (onEditUser) {
+      onEditUser(user);
+    } else {
+      setEditingUser(user);
+      setIsDrawerOpen(true);
+    }
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -92,12 +100,15 @@ const UserTable = () => {
         </TableBody>
       </Table>
 
-      <UserDrawer
-        open={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
-        user={editingUser}
-        onSave={handleUserSave}
-      />
+      {/* Only render the drawer if onEditUser is not provided */}
+      {!onEditUser && (
+        <UserDrawer
+          open={isDrawerOpen}
+          onOpenChange={setIsDrawerOpen}
+          user={editingUser}
+          onSave={handleUserSave}
+        />
+      )}
     </div>
   );
 };

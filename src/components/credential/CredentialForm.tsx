@@ -29,28 +29,43 @@ interface CredentialFormProps {
   credential?: Credential;
   onSave: (credential: Partial<Credential>) => void;
   onCancel: () => void;
+  onSubmit?: (data: any) => Promise<void>;
+  defaultValues?: Partial<FormValues>;
+  applicationMode?: boolean;
 }
 
-const CredentialForm = ({ credential, onSave, onCancel }: CredentialFormProps) => {
+const CredentialForm = ({ 
+  credential, 
+  onSave, 
+  onCancel,
+  onSubmit,
+  defaultValues,
+  applicationMode = false
+}: CredentialFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const defaultValues: FormValues = {
-    title: credential?.title || "",
-    username: credential?.username || "",
-    password: credential?.password || "",
-    url: credential?.url || "",
-    environment: credential?.environment || EnvironmentType.DEVELOPMENT,
-    category: credential?.category || CategoryType.APPLICATION,
-    applicationId: credential?.applicationId || "",
-    notes: credential?.notes || "",
+  const initialValues: FormValues = {
+    title: defaultValues?.title || credential?.title || "",
+    username: defaultValues?.username || credential?.username || "",
+    password: defaultValues?.password || credential?.password || "",
+    url: defaultValues?.url || credential?.url || "",
+    environment: defaultValues?.environment || credential?.environment || EnvironmentType.DEVELOPMENT,
+    category: defaultValues?.category || credential?.category || CategoryType.APPLICATION,
+    applicationId: defaultValues?.applicationId || credential?.applicationId || "",
+    notes: defaultValues?.notes || credential?.notes || "",
   };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(credentialSchema),
-    defaultValues,
+    defaultValues: initialValues,
   });
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
+    if (onSubmit) {
+      await onSubmit(values);
+      return;
+    }
+
     // Convert values to proper types
     const credentialData: Partial<Credential> = {
       ...values,
@@ -70,7 +85,11 @@ const CredentialForm = ({ credential, onSave, onCancel }: CredentialFormProps) =
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <BasicInfoFields form={form} showPassword={showPassword} setShowPassword={setShowPassword} />
+        <BasicInfoFields 
+          form={form} 
+          showPassword={showPassword} 
+          setShowPassword={setShowPassword} 
+        />
         
         <AccessFields form={form} />
         
