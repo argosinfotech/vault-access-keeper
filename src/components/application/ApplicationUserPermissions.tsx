@@ -1,28 +1,14 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { 
-  Table, 
-  TableHeader, 
-  TableRow, 
-  TableHead, 
-  TableBody, 
-  TableCell 
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash, ChevronDown, ChevronRight } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ApplicationPermission, CategoryType, User, UserApplicationPermission } from "@/types";
+import { ApplicationPermission, User, UserApplicationPermission } from "@/types";
 import { getUsersWithPermissions, removeApplicationPermission } from "@/api/applicationPermissionApi";
 import { getUsers } from "@/api/userApi";
 import { toast } from "sonner";
-import ApplicationUserPermissionForm from "./ApplicationUserPermissionForm";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Badge } from "@/components/ui/badge";
+import ApplicationUserTable from "./ApplicationUserTable";
+import AddUserPermissionSection from "./AddUserPermissionSection";
+import EmptyPermissionsState from "./EmptyPermissionsState";
+import PermissionsLoadingState from "./PermissionsLoadingState";
 
 interface ApplicationUserPermissionsProps {
   applicationId: string;
@@ -30,8 +16,7 @@ interface ApplicationUserPermissionsProps {
 
 export default function ApplicationUserPermissions({ applicationId }: ApplicationUserPermissionsProps) {
   const [isAddingUser, setIsAddingUser] = useState(false);
-  const [expandedUsers, setExpandedUsers] = useState<Record<string, boolean>>({});
-  
+
   const { data: permissions, isLoading: permissionsLoading, refetch } = useQuery({
     queryKey: ['applicationPermissions', applicationId],
     queryFn: () => getUsersWithPermissions(applicationId)
@@ -54,24 +39,15 @@ export default function ApplicationUserPermissions({ applicationId }: Applicatio
     }
   };
 
-  const handleAddUser = () => {
-    setIsAddingUser(true);
-  };
+  const handleAddUser = () => setIsAddingUser(true);
 
   const handlePermissionSaved = () => {
     setIsAddingUser(false);
     refetch();
   };
 
-  const toggleUserExpanded = (userId: string) => {
-    setExpandedUsers(prev => ({
-      ...prev,
-      [userId]: !prev[userId]
-    }));
-  };
-
   // Filter out users who already have permission
-  const availableUsers = allUsers?.filter(user => 
+  const availableUsers = allUsers?.filter(user =>
     !permissions?.some(p => p.userId === user.id)
   ) || [];
 
@@ -79,123 +55,27 @@ export default function ApplicationUserPermissions({ applicationId }: Applicatio
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">User Access</h3>
-        <Button 
-          size="sm" 
-          onClick={handleAddUser}
-          disabled={isAddingUser}
-          className="flex items-center gap-1"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add User</span>
-        </Button>
+        <AddUserPermissionSection
+          isAddingUser={isAddingUser}
+          onAddUser={handleAddUser}
+          users={availableUsers}
+          applicationId={applicationId}
+          onCancel={() => setIsAddingUser(false)}
+          onSave={handlePermissionSaved}
+        />
       </div>
-      
-      {isAddingUser && (
-        <div className="bg-muted/50 p-4 rounded-md border mb-4">
-          <ApplicationUserPermissionForm 
-            applicationId={applicationId}
-            users={availableUsers}
-            onCancel={() => setIsAddingUser(false)}
-            onSave={handlePermissionSaved}
-          />
-        </div>
-      )}
+
+      {isAddingUser && null}
 
       {permissionsLoading ? (
-        <div className="text-center py-4">Loading permissions...</div>
+        <PermissionsLoadingState />
       ) : permissions && permissions.length > 0 ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[30px]"></TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Default Permission</TableHead>
-              <TableHead>Since</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {permissions.map((permission) => (
-              <>
-                <TableRow key={permission.id}>
-                  <TableCell>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-6 w-6 p-0"
-                      onClick={() => toggleUserExpanded(permission.userId)}
-                    >
-                      {expandedUsers[permission.userId] ? 
-                        <ChevronDown className="h-4 w-4" /> : 
-                        <ChevronRight className="h-4 w-4" />
-                      }
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{permission.userName}</div>
-                    <div className="text-sm text-muted-foreground">{permission.userEmail}</div>
-                  </TableCell>
-                  <TableCell>
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs ${
-                      permission.permission === ApplicationPermission.ADMIN 
-                        ? "bg-blue-100 text-blue-800" 
-                        : "bg-green-100 text-green-800"
-                    }`}>
-                      {permission.permission}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    {formatDistanceToNow(permission.createdAt)} ago
-                  </TableCell>
-                  <TableCell>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
-                      onClick={() => handleRemoveUser(permission.userId)}
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-                {expandedUsers[permission.userId] && (
-                  <TableRow>
-                    <TableCell></TableCell>
-                    <TableCell colSpan={4}>
-                      <div className="bg-muted/30 p-3 rounded border-l-2 border-primary/40">
-                        <h4 className="text-sm font-medium mb-2">Category Permissions</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {permission.categoryPermissions.length > 0 ? 
-                            permission.categoryPermissions.map(cp => (
-                              <div key={cp.category} className="flex justify-between items-center text-sm">
-                                <span>{cp.category}</span>
-                                <Badge variant={cp.permission === ApplicationPermission.ADMIN ? "default" : "secondary"}>
-                                  {cp.permission}
-                                </Badge>
-                              </div>
-                            )) : 
-                            <p className="text-sm text-muted-foreground">Using default permission for all categories</p>
-                          }
-                        </div>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </>
-            ))}
-          </TableBody>
-        </Table>
+        <ApplicationUserTable
+          permissions={permissions}
+          onRemoveUser={handleRemoveUser}
+        />
       ) : (
-        <div className="text-center py-6 border rounded-md bg-muted/30">
-          <p className="text-muted-foreground">No users have been given access to this application yet.</p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="mt-2"
-            onClick={handleAddUser}
-          >
-            Add User Access
-          </Button>
-        </div>
+        <EmptyPermissionsState onAddUser={handleAddUser} />
       )}
     </div>
   );
