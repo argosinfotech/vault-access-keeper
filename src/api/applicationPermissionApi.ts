@@ -110,6 +110,8 @@ export async function grantApplicationPermission(
     permission: response.data.permission as ApplicationPermission,
     createdAt: new Date(response.data.created_at),
     updatedAt: new Date(response.data.updated_at),
+    userName: undefined,
+    userEmail: undefined,
   };
 }
 

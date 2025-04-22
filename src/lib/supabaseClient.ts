@@ -9,9 +9,14 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const createMockClient = () => {
   console.warn("Using mock Supabase client. Connect to Supabase for full functionality.");
   
+  // Create a basic mock response with data and error properties
+  const createMockResponse = (data: any = null, error: any = null) => {
+    return Promise.resolve({ data, error });
+  };
+  
   return {
     auth: {
-      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+      getUser: () => createMockResponse({ user: null }),
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
     },
     from: () => ({
@@ -19,26 +24,23 @@ const createMockClient = () => {
         eq: () => ({
           eq: () => ({
             select: () => ({
-              single: () => Promise.resolve({ data: null, error: null }),
+              single: () => createMockResponse({ id: "mock-id" })
             }),
           }),
-          single: () => Promise.resolve({ data: null, error: null }),
-          order: () => Promise.resolve({ data: [], error: null }),
+          single: () => createMockResponse({ id: "mock-id" }),
+          order: () => createMockResponse([]),
         }),
-        order: () => Promise.resolve({ data: [], error: null }),
+        order: () => createMockResponse([]),
       }),
       insert: () => ({
         select: () => ({
-          single: () => Promise.resolve({ 
-            data: { 
-              id: "mock-id", 
-              user_id: "user-id", 
-              application_id: "app-id", 
-              permission: "viewer", 
-              created_at: new Date().toISOString(), 
-              updated_at: new Date().toISOString() 
-            }, 
-            error: null 
+          single: () => createMockResponse({ 
+            id: "mock-id", 
+            user_id: "user-id", 
+            application_id: "app-id", 
+            permission: "viewer", 
+            created_at: new Date().toISOString(), 
+            updated_at: new Date().toISOString() 
           }),
         }),
       }),
@@ -46,35 +48,32 @@ const createMockClient = () => {
         eq: () => ({
           eq: () => ({
             select: () => ({
-              single: () => Promise.resolve({ 
-                data: { 
-                  id: "mock-id", 
-                  user_id: "user-id", 
-                  application_id: "app-id", 
-                  permission: "admin", 
-                  created_at: new Date().toISOString(), 
-                  updated_at: new Date().toISOString() 
-                }, 
-                error: null 
+              single: () => createMockResponse({ 
+                id: "mock-id", 
+                user_id: "user-id", 
+                application_id: "app-id", 
+                permission: "admin", 
+                created_at: new Date().toISOString(), 
+                updated_at: new Date().toISOString() 
               }),
             }),
           }),
           select: () => ({
-            single: () => Promise.resolve({ data: { id: "mock-id" }, error: null }),
+            single: () => createMockResponse({ id: "mock-id" }),
           }),
         }),
       }),
       delete: () => ({
         eq: () => ({
-          eq: () => Promise.resolve({ error: null }),
-          order: () => Promise.resolve({ data: [], error: null }),
+          eq: () => createMockResponse(),
+          order: () => createMockResponse([]),
         }),
       }),
     }),
     functions: {
-      invoke: (name, options) => {
+      invoke: (name: string, options: any) => {
         console.log(`Mocked function call to ${name}`, options);
-        return Promise.resolve({ data: {}, error: null });
+        return createMockResponse({});
       },
     },
   };
