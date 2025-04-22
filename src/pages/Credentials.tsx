@@ -3,19 +3,21 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import CredentialTable from "@/components/credential/CredentialTable";
+import CredentialGrid from "@/components/credential/CredentialGrid";
 import { Button } from "@/components/ui/button";
-import { Plus, LayoutGrid } from "lucide-react"; // Changed Apps to LayoutGrid
+import { Plus, LayoutGrid, LayoutList } from "lucide-react";
 import CredentialDrawer from "@/components/credential/CredentialDrawer";
 import ApplicationsDrawer from "@/components/application/ApplicationsDrawer";
 import { Application, Credential } from "@/types";
-import { mockApplications } from "@/lib/mock-data";
+import { mockApplications, mockCredentials } from "@/lib/mock-data";
 
 const Credentials = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [appsDrawerOpen, setAppsDrawerOpen] = useState(false);
   const [editCredential, setEditCredential] = useState<Credential | null>(null);
-  const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [credentials, setCredentials] = useState<Credential[]>(mockCredentials); // <-- use sample credentials
   const [applications, setApplications] = useState<Application[]>(mockApplications);
+  const [viewMode, setViewMode] = useState<"table" | "grid">("grid"); // <-- add grid view toggle
   const navigate = useNavigate();
 
   const handleAddCredential = (newCredential: Partial<Credential>) => {
@@ -82,17 +84,35 @@ const Credentials = () => {
         <div className="flex justify-between mb-6">
           <h2 className="text-xl font-semibold">All Credentials</h2>
           <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant={viewMode === "grid" ? "default" : "outline"}
+              className="flex items-center gap-1"
+              onClick={() => setViewMode("grid")}
+              aria-label="Grid view"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant={viewMode === "table" ? "default" : "outline"}
+              className="flex items-center gap-1"
+              onClick={() => setViewMode("table")}
+              aria-label="Table view"
+            >
+              <LayoutList className="h-4 w-4" />
+            </Button>
             <Button 
               size="sm"
               variant="outline"
               className="flex items-center gap-1"
               onClick={() => setAppsDrawerOpen(true)}
             >
-              <LayoutGrid className="h-4 w-4" /> {/* Changed Apps to LayoutGrid */}
+              <LayoutGrid className="h-4 w-4" />
               <span>Manage Apps</span>
             </Button>
             <Button 
-              size="sm"  
+              size="sm"
               className="flex items-center gap-1"
               onClick={() => setDrawerOpen(true)}
             >
@@ -101,11 +121,17 @@ const Credentials = () => {
             </Button>
           </div>
         </div>
-        <CredentialTable
-          credentials={credentials}
-          onEdit={handleEditCredential}
-          onDelete={(id) => setCredentials(credentials.filter(c => c.id !== id))}
-        />
+        <div>
+          {viewMode === "grid" ? (
+            <CredentialGrid credentials={credentials} />
+          ) : (
+            <CredentialTable
+              credentials={credentials}
+              onEdit={handleEditCredential}
+              onDelete={(id) => setCredentials(credentials.filter(c => c.id !== id))}
+            />
+          )}
+        </div>
       </div>
       <CredentialDrawer
         open={drawerOpen}
