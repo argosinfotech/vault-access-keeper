@@ -85,11 +85,7 @@ const CredentialForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <BasicInfoFields 
-          form={form} 
-          showPassword={showPassword} 
-          setShowPassword={setShowPassword} 
-        />
+        <BasicInfoFields form={form} />
         
         <AccessFields form={form} />
         

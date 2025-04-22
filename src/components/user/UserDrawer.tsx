@@ -9,6 +9,7 @@ import {
 import UserForm from "./UserForm";
 import { User } from "@/types";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface UserDrawerProps {
   open: boolean;
@@ -44,13 +45,14 @@ const UserDrawer = ({
           <SheetHeader className="flex flex-row items-center justify-between border-b pb-3">
             <SheetTitle>{mode === "add" ? "Add User" : "Edit User"}</SheetTitle>
             <SheetClose asChild>
-              <button
+              <Button
                 aria-label="Close"
+                variant="ghost"
                 className="ml-auto p-2 text-muted-foreground hover:text-foreground"
                 onClick={handleClose}
               >
                 <X className="h-5 w-5" />
-              </button>
+              </Button>
             </SheetClose>
           </SheetHeader>
           <div className="p-4">
