@@ -55,7 +55,6 @@ export default function ApplicationUserPermissionForm({
     defaultValues: {
       userId: "",
       permission: ApplicationPermission.VIEWER,
-      // Explicitly type categoryPermissions to match the CategoryPermission interface
       categoryPermissions: initialCategoryPermissions
     }
   });
@@ -84,8 +83,8 @@ export default function ApplicationUserPermissionForm({
   };
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
-    const updatedPermissions = categoryPermissions.map(cp => 
-      cp.category === category ? { category, permission } as CategoryPermission : cp
+    const updatedPermissions: CategoryPermission[] = categoryPermissions.map(cp => 
+      cp.category === category ? { category, permission } : cp
     );
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
