@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -83,8 +82,9 @@ export default function ApplicationUserPermissionForm({
   };
 
   const handleCategoryPermissionChange = (category: CategoryType, permission: ApplicationPermission) => {
+    // Explicitly create properly typed CategoryPermission objects
     const updatedPermissions: CategoryPermission[] = categoryPermissions.map(cp => 
-      cp.category === category ? { category, permission } : cp
+      cp.category === category ? { category: category, permission: permission } : cp
     );
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
@@ -92,10 +92,12 @@ export default function ApplicationUserPermissionForm({
 
   // Set all category permissions to match the main permission
   const updateAllCategoryPermissions = (permission: ApplicationPermission) => {
-    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map(category => ({
-      category: category,
+    // Explicitly create properly typed CategoryPermission objects with non-optional properties
+    const updatedPermissions: CategoryPermission[] = Object.values(CategoryType).map(categoryValue => ({
+      category: categoryValue,
       permission: permission
-    }));
+    } as CategoryPermission)); // Explicit cast to ensure the type
+    
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
   };
