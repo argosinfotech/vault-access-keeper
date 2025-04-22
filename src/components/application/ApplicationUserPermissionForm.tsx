@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -14,12 +15,13 @@ import FormActionButtons from "./FormActionButtons";
 const formSchema = z.object({
   userId: z.string().min(1, "Please select a user"),
   permission: z.nativeEnum(ApplicationPermission),
-  categoryPermissions: z.array(
-    z.object({
-      category: z.nativeEnum(CategoryType),
-      permission: z.nativeEnum(ApplicationPermission)
-    })
-  )
+  categoryPermissions: z
+    .array(
+      z.object({
+        category: z.nativeEnum(CategoryType), // required
+        permission: z.nativeEnum(ApplicationPermission)
+      })
+    )
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -31,6 +33,14 @@ interface ApplicationUserPermissionFormProps {
   onCancel: () => void;
 }
 
+// Helper to enforce required category fields everywhere
+const safeCategoryPermission = (
+  cp: Partial<CategoryPermission>
+): CategoryPermission => ({
+  category: cp.category ?? CategoryType.STAGING_HOSTING,
+  permission: cp.permission ?? ApplicationPermission.VIEWER
+});
+
 export default function ApplicationUserPermissionForm({
   applicationId,
   users,
@@ -39,12 +49,15 @@ export default function ApplicationUserPermissionForm({
 }: ApplicationUserPermissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Build a guaranteed-full initial array
   const initialCategoryPermissions: CategoryPermission[] = Object.values(CategoryType).map((category) => ({
     category,
     permission: ApplicationPermission.VIEWER
   }));
-  
-  const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(initialCategoryPermissions);
+
+  const [categoryPermissions, setCategoryPermissions] = useState<CategoryPermission[]>(
+    initialCategoryPermissions
+  );
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -62,11 +75,13 @@ export default function ApplicationUserPermissionForm({
     }
     setIsSubmitting(true);
     try {
+      // Ensure every categoryPermission is "safe"
+      const safeCategoryPermissions = values.categoryPermissions.map(safeCategoryPermission);
       await grantApplicationPermission(
         values.userId,
         applicationId,
         values.permission,
-        values.categoryPermissions
+        safeCategoryPermissions
       );
       toast.success("User access granted successfully");
       onSave();
@@ -88,7 +103,7 @@ export default function ApplicationUserPermissionForm({
       }
       return cp;
     });
-    
+
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
   };
@@ -98,7 +113,7 @@ export default function ApplicationUserPermissionForm({
       category,
       permission
     }));
-    
+
     setCategoryPermissions(updatedPermissions);
     form.setValue("categoryPermissions", updatedPermissions);
   };
