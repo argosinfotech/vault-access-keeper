@@ -41,13 +41,17 @@ const Credentials = () => {
         <div className="flex justify-between mb-6">
           <h2 className="text-xl font-semibold">All Credentials</h2>
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="flex items-center gap-1">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="flex items-center gap-1 rounded-md"
+            >
               <Filter className="h-4 w-4" />
               <span>Filter</span>
             </Button>
             <Button 
               size="sm" 
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 rounded-md"
               onClick={() => setIsSheetOpen(true)}
             >
               <Plus className="h-4 w-4" />

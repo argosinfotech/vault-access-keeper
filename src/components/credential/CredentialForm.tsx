@@ -220,10 +220,19 @@ export default function CredentialForm({
         />
 
         <div className="flex justify-end space-x-4 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onCancel}
+            className="rounded-md"
+          >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            disabled={isSubmitting} 
+            className="rounded-md"
+          >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </div>
