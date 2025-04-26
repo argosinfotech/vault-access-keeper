@@ -18,19 +18,19 @@ export const signInWithEmail = async (
 ): Promise<{ user: AuthUser | null; error: string | null }> => {
   try {
     // Authenticate with Supabase
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (authError) throw authError;
-    if (!authData.user) return { user: null, error: "Authentication failed" };
+    if (!data.user) return { user: null, error: "Authentication failed" };
 
     // Get user profile from database
     const { data: userData, error: userError } = await supabase
       .from("users")
       .select("*")
-      .eq("id", authData.user.id)
+      .eq("id", data.user.id)
       .single();
 
     if (userError) {
@@ -53,7 +53,7 @@ export const signInWithEmail = async (
     await supabase
       .from("users")
       .update({ last_login: new Date().toISOString() })
-      .eq("id", authData.user.id);
+      .eq("id", data.user.id);
 
     // Return user data
     return {
@@ -93,20 +93,20 @@ export const createUser = async (
 ): Promise<{ success: boolean; error: string | null; userId: string | null }> => {
   try {
     // First, create the authentication user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (authError) throw authError;
-    if (!authData.user) return { success: false, error: "Failed to create user", userId: null };
+    if (!data.user) return { success: false, error: "Failed to create user", userId: null };
 
     // Then, create the user profile in our users table
     const { data: userData, error: userError } = await supabase
       .from("users")
       .insert([
         {
-          id: authData.user.id,
+          id: data.user.id,
           email,
           name,
           role,
@@ -121,7 +121,7 @@ export const createUser = async (
       return { 
         success: false, 
         error: "User created but profile setup failed", 
-        userId: authData.user.id 
+        userId: data.user.id 
       };
     }
 
@@ -169,5 +169,3 @@ export const getCurrentUser = async (): Promise<AuthUser | null> => {
     return null;
   }
 };
-
-// Context setup will be implemented separately

@@ -14,88 +14,24 @@ const createMockClient = () => {
     return Promise.resolve({ data, error });
   };
   
-  // Create a consistent response object that always has data and error properties
-  const ensureConsistentResponse = (obj: any) => {
-    // Add a then method that always returns a properly structured response
-    const original = obj;
-    obj.then = (resolve: any) => resolve({ data: [], error: null });
-    return obj;
-  };
-
-  // Helper function to create consistent mock method chains
-  const createMockChain = () => {
-    const chain: any = {
-      data: [],
-      error: null,
-      then: (callback: any) => callback({ data: [], error: null }),
-    };
-    
-    const methods = [
-      'single', 'eq', 'neq', 'lt', 'lte', 'gt', 'gte', 'like', 'ilike', 'in',
-      'contains', 'containedBy', 'rangeLt', 'rangeGt', 'rangeGte', 'rangeLte',
-      'textSearch', 'match', 'not', 'filter', 'or', 'select', 'order', 'limit',
-      'range', 'maybeSingle'
-    ];
-    
-    methods.forEach(method => {
-      chain[method] = () => chain;
-    });
-    
-    return chain;
-  };
-
   return {
     auth: {
       getUser: () => createMockResponse({ user: null }),
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      signInWithPassword: () => createMockResponse({ user: null, session: null }),
+      signOut: () => createMockResponse({}),
+      signUp: () => createMockResponse({ user: null, session: null }),
     },
     from: (table: string) => {
-      const mockChain = createMockChain();
-      
-      return {
+      const mockChain = {
         select: () => mockChain,
-        insert: (values: any) => ({
-          ...mockChain,
-          select: () => ({
-            ...mockChain,
-            single: () => createMockResponse({ 
-              id: "mock-id", 
-              user_id: "user-id", 
-              application_id: "app-id", 
-              permission: "viewer", 
-              created_at: new Date().toISOString(), 
-              updated_at: new Date().toISOString() 
-            }),
-          }),
-        }),
-        update: (values: any) => ({
-          ...mockChain,
-          eq: (column: string, value: any) => ({
-            ...mockChain,
-            eq: (column2: string, value2: any) => ({
-              ...mockChain,
-              select: () => ({
-                ...mockChain,
-                single: () => createMockResponse({ 
-                  id: "mock-id", 
-                  user_id: "user-id", 
-                  application_id: "app-id", 
-                  permission: "admin", 
-                  created_at: new Date().toISOString(), 
-                  updated_at: new Date().toISOString() 
-                }),
-              }),
-            }),
-          }),
-        }),
-        delete: () => ({
-          ...mockChain,
-          eq: (column: string, value: any) => ({
-            ...mockChain,
-            eq: (column2: string, value2: any) => createMockResponse(),
-          }),
-        }),
+        insert: () => mockChain,
+        update: () => mockChain,
+        delete: () => mockChain,
+        eq: () => mockChain,
+        single: () => createMockResponse(),
       };
+      return mockChain;
     },
     functions: {
       invoke: (name: string, options: any) => {
