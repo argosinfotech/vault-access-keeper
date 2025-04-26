@@ -9,7 +9,227 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          details: string | null
+          id: string
+          target_id: string | null
+          target_type: string | null
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          details?: string | null
+          id?: string
+          target_id?: string | null
+          target_type?: string | null
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          details?: string | null
+          id?: string
+          target_id?: string | null
+          target_type?: string | null
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credentials: {
+        Row: {
+          application_id: string | null
+          category: string
+          created_at: string
+          created_by: string | null
+          environment: string
+          id: string
+          last_accessed_at: string | null
+          last_accessed_by: string | null
+          notes: string | null
+          password: string
+          title: string
+          updated_at: string
+          url: string | null
+          username: string
+        }
+        Insert: {
+          application_id?: string | null
+          category: string
+          created_at?: string
+          created_by?: string | null
+          environment: string
+          id?: string
+          last_accessed_at?: string | null
+          last_accessed_by?: string | null
+          notes?: string | null
+          password: string
+          title: string
+          updated_at?: string
+          url?: string | null
+          username: string
+        }
+        Update: {
+          application_id?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          environment?: string
+          id?: string
+          last_accessed_at?: string | null
+          last_accessed_by?: string | null
+          notes?: string | null
+          password?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credentials_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credentials_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credentials_last_accessed_by_fkey"
+            columns: ["last_accessed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_application_permissions: {
+        Row: {
+          application_id: string
+          category_permissions: Json
+          created_at: string
+          id: string
+          permission: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          application_id: string
+          category_permissions?: Json
+          created_at?: string
+          id?: string
+          permission: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          application_id?: string
+          category_permissions?: Json
+          created_at?: string
+          id?: string
+          permission?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_application_permissions_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_application_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          last_login: string | null
+          name: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          last_login?: string | null
+          name: string
+          role: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          last_login?: string | null
+          name?: string
+          role?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

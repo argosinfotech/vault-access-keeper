@@ -13,6 +13,8 @@ import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import MainLayout from "./layouts/MainLayout";
+import { AuthProvider } from "./contexts/AuthContext";
+import AuthGuard from "./components/auth/AuthGuard";
 
 const queryClient = new QueryClient();
 
@@ -22,18 +24,20 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/credentials" element={<Credentials />} />
-            <Route path="/applications" element={<Applications />} />
-            <Route path="/applications/:id" element={<ApplicationDetail />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/settings" element={<Settings />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={<AuthGuard><MainLayout /></AuthGuard>}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/credentials" element={<Credentials />} />
+              <Route path="/applications" element={<Applications />} />
+              <Route path="/applications/:id" element={<ApplicationDetail />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
