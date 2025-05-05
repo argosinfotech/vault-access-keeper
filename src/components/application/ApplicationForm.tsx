@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -9,14 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Application } from "@/types";
 import { toast } from "sonner";
-import { addApplication, updateApplication } from "@/api/applicationApi";
+import { applicationApi } from "@/lib/api";
+import { authApi } from "@/lib/api";
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
   description: z.string().optional(),
-  // category removed
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -39,7 +38,6 @@ export default function ApplicationForm({
     defaultValues: {
       name: defaultValues?.name || "",
       description: defaultValues?.description || "",
-      // category removed
     },
   });
 
@@ -47,22 +45,48 @@ export default function ApplicationForm({
     setIsSubmitting(true);
     try {
       let application: Application;
+      const currentUser = authApi.getCurrentUser();
+      const userId = currentUser?.id || "unknown";
+      
       if (defaultValues?.id) {
-        // Update existing application, don't provide category anymore
-        const updatedApp = await updateApplication(defaultValues.id, {
+        // Update existing application
+        const appId = parseInt(defaultValues.id);
+        
+        await applicationApi.update(appId, {
+          name: data.name,
+          description: data.description || "",
+          isActive: true
+        });
+        
+        // Since the API doesn't return the full updated object,
+        // we'll construct it from what we know
+        application = {
+          id: defaultValues.id,
           name: data.name,
           description: data.description,
-        });
-        application = updatedApp;
+          createdBy: defaultValues.createdBy || userId,
+          createdAt: defaultValues.createdAt || new Date(),
+          updatedAt: new Date()
+        };
       } else {
-        // Create new application, don't provide category anymore
-        const newApp = await addApplication({
+        // Create new application
+        const appId = await applicationApi.create({
+          name: data.name,
+          description: data.description || "",
+          isActive: true
+        });
+        
+        // Construct the application object with the new ID
+        application = {
+          id: appId.toString(),
           name: data.name,
           description: data.description,
-          createdBy: "current-user-id", // In a real app, get from auth context
-        });
-        application = newApp;
+          createdBy: userId,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
       }
+      
       onSubmit(application);
     } catch (error) {
       toast.error("Failed to save application");

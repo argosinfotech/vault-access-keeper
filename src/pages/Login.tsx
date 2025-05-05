@@ -1,15 +1,14 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "@/components/auth/LoginForm";
+import { authApi } from "@/lib/api";
 
 const Login = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
     // Check if user is already logged in
-    const currentUser = localStorage.getItem("currentUser");
-    if (currentUser) {
+    if (authApi.isAuthenticated()) {
       navigate("/");
     }
   }, [navigate]);

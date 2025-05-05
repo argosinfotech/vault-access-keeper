@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CredentialCard from "@/components/credential/CredentialCard";
@@ -17,9 +16,11 @@ import { Button } from "@/components/ui/button";
 interface CredentialGridProps {
   credentials: Credential[];
   isLoading?: boolean;
+  onView?: (credential: Credential) => void;
+  onEdit?: (credential: Credential) => void;
 }
 
-const CredentialGrid = ({ credentials, isLoading }: CredentialGridProps) => {
+const CredentialGrid = ({ credentials, isLoading, onView, onEdit }: CredentialGridProps) => {
   const [activeTab, setActiveTab] = useState<EnvironmentType | "all">("all");
   const [selectedCategories, setSelectedCategories] = useState<CategoryType[]>([]);
 
@@ -106,7 +107,12 @@ const CredentialGrid = ({ credentials, isLoading }: CredentialGridProps) => {
           <TabsContent value={activeTab} className="mt-6">
             <div className="divide-y divide-border rounded-lg border bg-background">
               {filteredCredentials.map(credential => (
-                <CredentialCard key={credential.id} credential={credential} />
+                <CredentialCard 
+                  key={credential.id} 
+                  credential={credential} 
+                  onView={onView}
+                  onEdit={onEdit}
+                />
               ))}
             </div>
             

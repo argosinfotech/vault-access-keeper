@@ -37,16 +37,7 @@ export default function ApplicationsDrawer({
             <SheetTitle>
               {application ? "Edit Application" : "Add Application"}
             </SheetTitle>
-            <SheetClose asChild>
-              <Button
-                aria-label="Close"
-                variant="ghost"
-                className="ml-auto h-8 w-8 p-0"
-                onClick={onClose}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </SheetClose>
+            
           </SheetHeader>
           <div className="p-4">
             <ApplicationForm

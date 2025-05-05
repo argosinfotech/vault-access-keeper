@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
@@ -13,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import ApplicationGrid from "@/components/application/ApplicationGrid";
 import ApplicationForm from "@/components/application/ApplicationForm";
-import { getApplications } from "@/api/applicationApi";
+import { applicationApi } from "@/lib/api";
 import { Application } from "@/types";
 import { toast } from "sonner";
 
@@ -23,7 +22,17 @@ const Applications = () => {
   
   const { data: applications, isLoading, error, refetch } = useQuery({
     queryKey: ['applications'],
-    queryFn: getApplications
+    queryFn: async () => {
+      const response = await applicationApi.getAll();
+      return response.map((app) => ({
+        id: app.applicationId.toString(),
+        name: app.name,
+        description: app.description || undefined,
+        createdBy: app.createdBy?.toString() || "unknown",
+        createdAt: new Date(app.createdDate),
+        updatedAt: new Date(app.modifiedDate || app.createdDate),
+      }));
+    }
   });
 
   const handleApplicationAction = async () => {

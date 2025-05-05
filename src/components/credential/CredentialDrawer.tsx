@@ -1,5 +1,3 @@
-
-import React from "react";
 import {
   Sheet,
   SheetContent,
@@ -10,16 +8,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import CredentialForm from "./CredentialForm";
-import { Credential } from "@/types";
+import { Application, Credential } from "@/types";
 
 interface CredentialDrawerProps {
   open: boolean;
   credential: Credential | null;
+  applications: Application[];
   onClose: () => void;
   onSave: (credential: Credential) => void;
 }
 
-const CredentialDrawer = ({ open, credential, onClose, onSave }: CredentialDrawerProps) => {
+const CredentialDrawer = ({ open, credential, applications, onClose, onSave }: CredentialDrawerProps) => {
   return (
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent side="right" className="max-w-md ml-auto w-full shadow-lg">
@@ -28,20 +27,11 @@ const CredentialDrawer = ({ open, credential, onClose, onSave }: CredentialDrawe
             <SheetTitle>
               {credential ? "Edit Credential" : "Add Credential"}
             </SheetTitle>
-            <SheetClose asChild>
-              <Button
-                aria-label="Close"
-                variant="ghost"
-                className="ml-auto h-8 w-8 p-0"
-                onClick={onClose}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </SheetClose>
           </SheetHeader>
-          <div className="p-4">
+          <div className="flex-1 p-4 overflow-y-auto">
             <CredentialForm
               credential={credential || undefined}
+              applications={applications}
               onSave={onSave}
               onCancel={onClose}
             />

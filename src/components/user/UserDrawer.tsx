@@ -1,4 +1,3 @@
-
 import {
   Sheet,
   SheetContent,
@@ -34,9 +33,10 @@ const UserDrawer = ({
   };
 
   const handleCompleted = () => {
-    // Just call onClose without passing the user object
-    // The UserForm component will handle saving the user data
-    handleClose();
+    // Call onClose to trigger refresh and close the drawer
+    // The UserForm component has already handled saving the user data
+    if (onClose) onClose();
+    if (onOpenChange) onOpenChange(false);
   };
 
   return (

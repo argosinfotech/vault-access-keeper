@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { User } from "@/types";
@@ -8,9 +7,10 @@ import { Search, Bell } from "lucide-react";
 
 interface HeaderProps {
   title: string;
+  children?: ReactNode;
 }
 
-const Header = ({ title }: HeaderProps) => {
+const Header = ({ title, children }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -18,6 +18,8 @@ const Header = ({ title }: HeaderProps) => {
       <h1 className="text-2xl font-bold">{title}</h1>
       
       <div className="flex items-center gap-4">
+        {children}
+        
         <div className="relative">
           <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
           <Input 

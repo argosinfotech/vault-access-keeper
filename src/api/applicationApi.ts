@@ -1,96 +1,90 @@
-
-import { supabase } from "@/lib/supabaseClient";
+import { apiRequest } from "@/lib/api";
 import { Application } from "@/types";
 
 // Get all applications
 export async function getApplications(): Promise<Application[]> {
-  const { data, error } = await supabase
-    .from("applications")
-    .select("*")
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return (data ?? []).map((app: any) => ({
-    id: app.id,
+  const response = await apiRequest<any[]>("/Applications");
+  return response.map((app) => ({
+    id: app.applicationId.toString(),
     name: app.name,
     description: app.description || undefined,
-    createdBy: app.created_by,
-    createdAt: new Date(app.created_at),
-    updatedAt: new Date(app.updated_at),
+    createdBy: app.createdBy?.toString() || "unknown",
+    createdAt: new Date(app.createdDate),
+    updatedAt: new Date(app.modifiedDate || app.createdDate),
   }));
 }
 
 // Get a single application by ID
 export async function getApplicationById(id: string): Promise<Application> {
-  const { data, error } = await supabase
-    .from("applications")
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error) throw error;
+  const response = await apiRequest<any>(`/Applications/${id}`);
   return {
-    id: data.id,
-    name: data.name,
-    description: data.description || undefined,
-    createdBy: data.created_by,
-    createdAt: new Date(data.created_at),
-    updatedAt: new Date(data.updated_at),
+    id: response.applicationId.toString(),
+    name: response.name,
+    description: response.description || undefined,
+    createdBy: response.createdBy?.toString() || "unknown",
+    createdAt: new Date(response.createdDate),
+    updatedAt: new Date(response.modifiedDate || response.createdDate),
   };
 }
 
 // Add a new application
 export async function addApplication(newApp: Omit<Application, "id" | "createdAt" | "updatedAt">): Promise<Application> {
-  const { data, error } = await supabase
-    .from("applications")
-    .insert([{
-      ...newApp
-    }])
-    .select()
-    .single();
-  if (error) throw error;
+  const payload = {
+    name: newApp.name,
+    description: newApp.description || "",
+    isActive: true
+  };
+  
+  const response = await apiRequest<any>("/Applications", {
+    method: "POST",
+    data: payload
+  });
+  
   return {
-    id: data.id,
-    name: data.name,
-    description: data.description || undefined,
-    createdBy: data.created_by,
-    createdAt: new Date(data.created_at),
-    updatedAt: new Date(data.updated_at),
+    id: response.toString(), // The API returns just the ID
+    name: newApp.name,
+    description: newApp.description,
+    createdBy: newApp.createdBy,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 }
 
 // Update an application
 export async function updateApplication(id: string, changes: Partial<Application>): Promise<Application> {
-  const { data, error } = await supabase
-    .from("applications")
-    .update({
-      ...changes
-    })
-    .eq("id", id)
-    .select()
-    .single();
-  if (error) throw error;
+  const payload = {
+    applicationId: parseInt(id),
+    name: changes.name,
+    description: changes.description || "",
+    isActive: true
+  };
+  
+  await apiRequest<any>(`/Applications/${id}`, {
+    method: "PUT",
+    data: payload
+  });
+  
+  // Since the API doesn't return the updated object, we'll construct it
+  // from what we know
   return {
-    id: data.id,
-    name: data.name,
-    description: data.description || undefined,
-    createdBy: data.created_by,
-    createdAt: new Date(data.created_at),
-    updatedAt: new Date(data.updated_at),
+    id,
+    name: changes.name || "",
+    description: changes.description,
+    createdBy: changes.createdBy || "unknown",
+    createdAt: changes.createdAt || new Date(),
+    updatedAt: new Date(),
   };
 }
 
 // Delete an application
 export async function deleteApplication(id: string): Promise<void> {
-  const result = await supabase.from("applications").delete().eq("id", id);
-  if (result.error) throw result.error;
+  await apiRequest<any>(`/Applications/${id}`, {
+    method: "DELETE"
+  });
 }
 
 // Get credentials for an application (across environments)
 export async function getCredentialsByApplicationId(applicationId: string): Promise<any[]> {
-  const { data, error } = await supabase
-    .from("credentials")
-    .select("*")
-    .eq("application_id", applicationId)
-    .order("environment", { ascending: true });
-  if (error) throw error;
-  return data ?? [];
+  const response = await apiRequest<any[]>(`/Credentials?applicationId=${applicationId}`);
+  return response || [];
 }

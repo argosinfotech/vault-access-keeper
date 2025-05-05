@@ -17,7 +17,7 @@ export enum EnvironmentType {
 
 // Category types for organizing credentials (updated to fixed list)
 export enum CategoryType {
-  STAGING_HOSTING = "Staging Hosting",
+  STAGING_HOSTING = "Development Hosting",
   PRODUCTION_HOSTING = "Production Hosting",
   STAGING_APPLICATION = "Staging Application",
   LIVE_APPLICATION = "Live Application",

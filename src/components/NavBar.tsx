@@ -1,14 +1,21 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { UserRole } from "@/types";
 import { Shield, Key, User, Database, Settings } from "lucide-react";
-import { currentUser } from "@/lib/mock-data";
 import LogoutButton from "@/components/auth/LogoutButton";
 
 const NavBar = () => {
   const location = useLocation();
   const [activePage, setActivePage] = useState<string>("dashboard");
+  const [userData, setUserData] = useState<any>(null);
+  
+  // Load user data from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) {
+      setUserData(JSON.parse(storedUser));
+    }
+  }, []);
   
   // Update active page based on location
   useEffect(() => {
@@ -18,6 +25,20 @@ const NavBar = () => {
     else if (path.includes("/users")) setActivePage("users");
     else if (path.includes("/settings")) setActivePage("settings");
   }, [location]);
+
+  // Get role display text
+  const getRoleDisplay = (roleId: number) => {
+    switch (roleId) {
+      case 1: return "admin";
+      case 2: return "manager";
+      case 3: return "viewer";
+      default: return "user";
+    }
+  };
+
+  if (!userData) {
+    return null; // Don't render navbar if user data isn't loaded
+  }
 
   return (
     <div className="bg-sidebar text-sidebar-foreground h-screen w-64 p-4 fixed left-0 top-0 flex flex-col">
@@ -49,7 +70,7 @@ const NavBar = () => {
           <span>Credentials</span>
         </Link>
 
-        {currentUser.role === UserRole.ADMIN && (
+        {userData.role === 1 && (
           <Link to="/users" 
             className={`flex items-center gap-3 px-3 py-2 rounded-md w-full ${
               activePage === "users" 
@@ -78,11 +99,11 @@ const NavBar = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-              {currentUser.name.charAt(0)}
+              {userData.name.charAt(0)}
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-medium">{currentUser.name}</span>
-              <span className="text-xs text-sidebar-foreground/70">{currentUser.role}</span>
+              <span className="text-sm font-medium">{userData.name}</span>
+              <span className="text-xs text-sidebar-foreground/70">{getRoleDisplay(userData.role)}</span>
             </div>
           </div>
           <LogoutButton />

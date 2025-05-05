@@ -1,5 +1,5 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface StatsCardProps {
   title: string;
@@ -10,6 +10,7 @@ interface StatsCardProps {
     value: number;
     isPositive: boolean;
   };
+  loading?: boolean;
 }
 
 const StatsCard = ({
@@ -17,7 +18,8 @@ const StatsCard = ({
   value,
   description,
   icon,
-  trend
+  trend,
+  loading = false
 }: StatsCardProps) => {
   return (
     <Card>
@@ -26,14 +28,23 @@ const StatsCard = ({
         {icon && <div className="text-muted-foreground">{icon}</div>}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
-        )}
-        {trend && (
-          <div className={`text-xs mt-2 ${trend.isPositive ? 'text-success' : 'text-destructive'}`}>
-            {trend.isPositive ? '↑' : '↓'} {trend.value}%
-          </div>
+        {loading ? (
+          <>
+            <Skeleton className="w-16 h-8 mb-2" />
+            {description && <Skeleton className="w-24 h-4" />}
+          </>
+        ) : (
+          <>
+            <div className="text-2xl font-bold">{value}</div>
+            {description && (
+              <p className="text-xs text-muted-foreground mt-1">{description}</p>
+            )}
+            {trend && (
+              <div className={`text-xs mt-2 ${trend.isPositive ? 'text-success' : 'text-destructive'}`}>
+                {trend.isPositive ? '↑' : '↓'} {trend.value}%
+              </div>
+            )}
+          </>
         )}
       </CardContent>
     </Card>

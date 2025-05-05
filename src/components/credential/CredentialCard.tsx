@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Credential, EnvironmentType, CategoryType } from "@/types";
-import { Eye, EyeOff, Copy, ExternalLink } from "lucide-react";
+import { Eye, Copy, ExternalLink, Edit2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
@@ -12,16 +11,27 @@ import { useNavigate } from "react-router-dom";
 
 interface CredentialCardProps {
   credential: Credential;
+  onView?: (credential: Credential) => void;
+  onEdit?: (credential: Credential) => void;
 }
 
-const CredentialCard = ({ credential }: CredentialCardProps) => {
-  const [showPassword, setShowPassword] = useState(false);
+const CredentialCard = ({ credential, onView, onEdit }: CredentialCardProps) => {
   const navigate = useNavigate();
 
-  const { data: application } = useQuery({
+  const { data: application, isError } = useQuery({
     queryKey: ['application', credential.applicationId],
-    queryFn: () => getApplicationById(credential.applicationId || ''),
-    enabled: !!credential.applicationId
+    queryFn: () => {
+      if (credential.applicationId) {
+        return getApplicationById(credential.applicationId).catch(err => {
+          console.error("Failed to load application details:", err);
+          return null;
+        });
+      }
+      return null;
+    },
+    enabled: !!credential.applicationId,
+    retry: false, // Don't retry if the application fetch fails
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   const getEnvironmentColor = (env: EnvironmentType) => {
@@ -56,6 +66,18 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
     toast.success(`${type} copied to clipboard`);
   };
 
+  const handleViewCredential = () => {
+    if (onView) {
+      onView(credential);
+    }
+  };
+
+  const handleEditCredential = () => {
+    if (onEdit) {
+      onEdit(credential);
+    }
+  };
+
   return (
     <div className="group p-4 hover:bg-muted/50 rounded-lg transition-colors">
       <div className="flex items-center justify-between gap-4 mb-3">
@@ -63,12 +85,22 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
           <span className="text-xl flex-shrink-0">{getCategoryIcon(credential.category)}</span>
           <h3 className="font-medium truncate">{credential.title}</h3>
         </div>
-        <Badge className={`${getEnvironmentColor(credential.environment)} text-xs`}>
-          {credential.environment}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge className={`${getEnvironmentColor(credential.environment)} text-xs`}>
+            {credential.environment}
+          </Badge>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={handleEditCredential}
+          >
+            <Edit2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
       
-      {application && (
+      {application && !isError && (
         <div className="mb-3">
           <Button 
             variant="link" 
@@ -100,24 +132,14 @@ const CredentialCard = ({ credential }: CredentialCardProps) => {
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-muted-foreground">Password</span>
           <div className="flex items-center gap-1">
-            <code className="text-xs bg-muted px-1 py-0.5 rounded">
-              {showPassword ? credential.password : '••••••••'}
-            </code>
+            <code className="text-xs bg-muted px-1 py-0.5 rounded">••••••••</code>
             <Button
               size="icon"
               variant="ghost"
               className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={handleViewCredential}
             >
-              {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => copyToClipboard(credential.password, "Password")}
-            >
-              <Copy className="h-3 w-3" />
+              <Eye className="h-3 w-3" />
             </Button>
           </div>
         </div>
