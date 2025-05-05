@@ -33,6 +33,7 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
+      console.log("Attempting login...");
       // Call the authentication API directly with axios
       const response = await axios.post(`${API_BASE_URL}/Auth/login`, {
         username,
@@ -40,6 +41,7 @@ const LoginForm = () => {
       });
 
       const data = response.data as LoginResponse;
+      console.log("Login successful, received token", data.token ? "✓" : "✗");
 
       // Store the user data and token
       const userData = {
@@ -50,14 +52,16 @@ const LoginForm = () => {
         token: data.token,
       };
 
+      console.log("Storing user data in localStorage");
       localStorage.setItem("currentUser", JSON.stringify(userData));
       localStorage.setItem("token", data.token); // Store token separately for easy access
 
       // Show success toast
       toast.success("Login successful");
+      console.log("About to redirect to dashboard...");
 
-      // Redirect to dashboard
-      navigate("/");
+      // Most reliable way to force full page reload
+      window.location.replace("/");
     } catch (err) {
       let errorMessage = "Authentication failed. Please try again.";
       

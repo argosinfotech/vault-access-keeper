@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { AuthUser, getCurrentUser, signInWithEmail, signOut } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
@@ -30,15 +29,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Load user on mount
+  // Load user on mount - only once
   useEffect(() => {
     const loadUser = async () => {
       setIsLoading(true);
       try {
+        // Check localStorage first
+        const token = localStorage.getItem("token");
+        const userDataStr = localStorage.getItem("currentUser");
+        
+        if (token && userDataStr) {
+          try {
+            const userData = JSON.parse(userDataStr) as AuthUser;
+            setUser(userData);
+            return;
+          } catch (e) {
+            console.error("Error parsing stored user data:", e);
+          }
+        }
+        
+        // Fall back to authentication service
         const currentUser = await getCurrentUser();
         setUser(currentUser);
       } catch (error) {
         console.error("Error loading user:", error);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -74,6 +89,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const success = await signOut();
       if (success) {
+        // Clear localStorage
+        localStorage.removeItem("token");
+        localStorage.removeItem("currentUser");
+        
         setUser(null);
         navigate("/login");
         toast.success("You have been logged out");

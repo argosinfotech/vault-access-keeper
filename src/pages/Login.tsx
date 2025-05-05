@@ -3,24 +3,19 @@ import { useNavigate } from "react-router-dom";
 import LoginForm from "@/components/auth/LoginForm";
 import { authApi } from "@/lib/api";
 
-const Login = () => {
+export default function Login() {
   const navigate = useNavigate();
   
   useEffect(() => {
     // Check if user is already logged in
     if (authApi.isAuthenticated()) {
-      navigate("/");
+      navigate("/", { replace: true });
     }
   }, [navigate]);
 
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center bg-gradient-to-tr from-purple-900 via-indigo-900 to-blue-900">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" style={{ pointerEvents: "none" }}></div>
-      <div className="relative z-10">
-        <LoginForm />
-      </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <LoginForm />
     </div>
   );
-};
-
-export default Login;
+}
